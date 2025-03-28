@@ -305,46 +305,12 @@ namespace Romme_V2
 
         private void ShowGesamtPunkte(string[] spielerNamen, List<int[]> gesamtPunkte)
         {
-            // StringBuilder gesamtPunkteString = new StringBuilder();
-
-
-            // Spielernamen anzeigen
+                        // Spielernamen anzeigen
             punktVerwaltung.SpielerNamenAnzeigen(spielerNamen);
-            /*****************************
-            punktVerwaltung.gesamtPunkteString.Append("Spiel:".PadRight(10));
-            foreach (string spielerName in spielerNamen)
-            {
-                punktVerwaltung.gesamtPunkteString.Append(spielerName.PadRight(10));
-            }
-            punktVerwaltung.gesamtPunkteString.AppendLine();
-            ****************/
+           
             // Punkte anzeigen und Gewinner mit x ausweisen
             punktVerwaltung.PunktListeErstellen(gesamtPunkte);
-            /*******************************
-            for (int i = 0; i < gesamtPunkte.Count; i++)
-            {
-               punktVerwaltung.gesamtPunkteString.Append($"Spiel {i + 1}".PadRight(10));
-                for (int j = 0; j < gesamtPunkte[i].Length; j++)
-                {
-                    string punktAnzeige = gesamtPunkte[i][j].ToString();
-
-                    // Gewinner, wenn 0 oder "" in erster Zeile
-                    if (i == 0 && (gesamtPunkte[i][j] == 0 || string.IsNullOrEmpty(punktAnzeige)))
-                    {
-                        punktAnzeige = "X";
-                    }
-
-                    // Spieler gewinnt, wenn Punkte gleich sind in zwei aufeinanderfolgenden Zeilen
-                    if (i > 0 && gesamtPunkte[i][j] == gesamtPunkte[i - 1][j])
-                    {
-                        punktAnzeige = "X";
-                    }
-
-                    punktVerwaltung.gesamtPunkteString.Append(punktAnzeige.PadRight(10));
-                }
-                punktVerwaltung.gesamtPunkteString.AppendLine();
-            }
-******************************/
+            
             MessageBox.Show(punktVerwaltung.gesamtPunkteString.ToString(), "Gesamtpunkte");
             punktVerwaltung.gesamtPunkteString.Clear();
         }
@@ -520,25 +486,13 @@ namespace Romme_V2
         // StringBuilder als Klassenvariable definieren
         public StringBuilder gesamtPunkteString = new StringBuilder();
 
-        // Methode, um Punkte hinzuzufügen
-        /***************************
-        public void PunkteHinzufuegen(string punkte)
-        {
-            gesamtPunkteString.Append(punkte).Append("\n");
-        }
-        *************/
+       
         // Methode, um den StringBuilder zu leeren
         public void StringBuilderLeeren()
         {
             gesamtPunkteString.Clear();
         }
-        /************
-        // Methode, um den aktuellen Verlauf anzuzeigen
-        public void VerlaufAnzeigen()
-        {
-            Console.WriteLine(gesamtPunkteString.ToString());
-        }
-        ********************/
+        
         // Spielernamen anzeigen
         public void SpielerNamenAnzeigen(string[]spielerNamen)
         {
