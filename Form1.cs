@@ -27,7 +27,7 @@ namespace Romme_V2
         private string filePath = "spielerdaten.csv"; // Pfad zur CSV-Datei
         private int idCounter = 1; // Für die ID-Erstellung
         private PunktVerwaltung punktVerwaltung = new PunktVerwaltung();
-        private List<(int spielNummer, string spielerID, int[] punkteProSpiel)> spielPunkte = new List<(int, string, int[])>();// Liste von Tupeln, die die Spielnummer, ID des Spielers und Punkte enthalten
+        private List<(string spielNummerFinal, string spielerID, int[] punkteProSpiel)> spielPunkte = new List<(string, string, int[])>();// Liste von Tupeln, die die Spielnummer, ID des Spielers und Punkte enthalten
 
         public NbrJug()
         {
@@ -56,8 +56,49 @@ namespace Romme_V2
             // Generiere die Spielnummer basierend auf Datum, Partiezähler und Spielnummer
             string spielNummerFinal = $"{aktuellesDatum:yyMMdd}{partieZaehler:D2}{spielNummer:D2}";
 
+            
             return spielNummerFinal;
         }
+        // Zählt die Anzahl der Partien, die an einem Tag gespielt wurden
+        private void PartieZaehler()
+        {
+            // Prüfen, ob Datei existiert
+            if (File.Exists(dateiPfad))
+            {
+                // Alle Zeilen der Datei lesen
+                string[] zeilen = File.ReadAllLines(dateiPfad);
+
+                // Letzte Zeile extrahieren
+                string letzteZeile = zeilen[zeilen.Length - 1];
+
+                // Die erste Position der letzten Zeile ist die SpielnummerID
+                // Wir nehmen an, dass die Daten in der CSV-Datei durch Komma getrennt sind
+                string spielnummerID = letzteZeile.Split(',')[0];
+
+                // Die ersten sechs Zeichen der SpielnummerID extrahieren
+                string datumTeil = spielnummerID.Substring(0, 6);
+
+                // Aktuelles Datum im Format "yyMMdd" erhalten
+                string datumAktuell = DateTime.Now.ToString("yyMMdd");
+
+                // Vergleich der Datumsangaben
+                if (datumTeil == datumAktuell)
+                {
+                    // partieZaehler um 1 erhöhen
+                    partieZaehler++;
+                }
+            }
+            else
+            {
+                Console.WriteLine("Die Datei existiert nicht.");
+            }
+
+            // Ausgabe des Partie-Zählers
+            Console.WriteLine("Partie-Zähler: " + partieZaehler);
+        }
+
+
+
 /****************
         public string GeneriereSpielName(int spielNummer)
         {
@@ -77,7 +118,7 @@ namespace Romme_V2
                     for (int i = 0; i < spiel.punkteProSpiel.Length; i++)
                     {
                         // Format: Spielnummer, SpielerID, Punkte des Spielers
-                        writer.WriteLine($"{spiel.spielNummer}, {spiel.spielerID}, {spiel.punkteProSpiel[i]}");
+                        writer.WriteLine($"{spiel.spielNummerFinal}, {spiel.spielerID}, {spiel.punkteProSpiel[i]}");
                     }
                 }
             }
@@ -87,6 +128,7 @@ namespace Romme_V2
 
         private void clcBtn_Click(object sender, EventArgs e)
         {
+            GeneriereSpielNummer();
             MessageBox.Show($"SpielID: {GeneriereSpielNummer()}");
            // SpielSpeichern(GeneriereSpielName(spielNummer), new List<(string spielerID, int punkte)>());
 
@@ -118,7 +160,7 @@ namespace Romme_V2
             MessageBox.Show($"Die Punkte pro Spieler sind: {punkteAnzeigen}", "Punkte anzeigen", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
             //Füge das Array mit den Punkten des aktuellen Spiels zur Liste hinzu
-            spielPunkte.Add((spielNummer, "SpielerID123", (int[])punkteProSpiel.Clone()));
+            spielPunkte.Add((spielNummerFinal, "SpielerID123", (int[])punkteProSpiel.Clone()));
 
             //spielPunkte.Add(punkteProSpiel);
 
@@ -127,7 +169,7 @@ namespace Romme_V2
             {
                 for (int i = 0; i < spiel.punkteProSpiel.Length; i++)
                 {
-                    ausgabe += $"Spielnummer: {spiel.spielNummer}, SpielerID: {spiel.spielerID}, Punkte: {spiel.punkteProSpiel[i]}{Environment.NewLine}";
+                    ausgabe += $"Spielnummer: {spiel.spielNummerFinal}, SpielerID: {spiel.spielerID}, Punkte: {spiel.punkteProSpiel[i]}{Environment.NewLine}";
                 }
             }
             MessageBox.Show(ausgabe, "Überprüfung der Liste");
@@ -244,6 +286,8 @@ namespace Romme_V2
             System.Windows.Forms.Label[] sumFields = { sumPl1, sumPl2, sumPl3, sumPl4, sumPl5 };
             ++spielNummer;
             gameCtr.Text = spielNummer.ToString();
+            //Pruefen ob mehrere Partien am gleichen Tag gespielt werden um SpielnummerID anzupassen
+            PartieZaehler();
             // Ensure numPlayer is set correctly
             if (numPlayer <= 1)
             {
