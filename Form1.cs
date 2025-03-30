@@ -470,6 +470,11 @@ namespace Romme_V2
         // Hilfsmethoden für Spieler
         private void LadeSpieler()
         {
+            if (!File.Exists(filePath))
+            {
+                MessageBox.Show($"Datei {filePath} wurde nicht gefunden!", "Fehler");
+            }
+
             if (File.Exists(filePath))
             {
                 spielerListe = File.ReadAllLines(filePath)
@@ -487,6 +492,13 @@ namespace Romme_V2
                         };
                     }).ToList();
             }
+            MessageBox.Show($"Anzahl der Spieler in der Liste: {spielerListe.Count}", "Spielerübersicht");
+            /****
+            foreach (var spieler in spielerListe)
+            {
+                MessageBox.Show($"Spieler: {spieler.Vorname} {spieler.Nachname}", "Spielerdetails");
+            }
+            ****/
         }
         private void SpeichereSpieler()
         {
