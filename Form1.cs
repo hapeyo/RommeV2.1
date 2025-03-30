@@ -20,21 +20,45 @@ namespace Romme_V2
         private int spielNummer = 0;
         private int numPlayer = 0;
         private List<int[]> gesamtPunkte = new List<int[]>();
-        private static string aktuellesDatum = DateTime.Now.ToString("yyMMdd");
-        private static int zaehler = 1;
+        private DateTime aktuellesDatum = DateTime.Today;
+        private int partieZaehler = 1;
         private static string dateiPfad = "spiele.csv";
         private List<Spieler> spielerListe = new List<Spieler>();
         private string filePath = "spielerdaten.csv"; // Pfad zur CSV-Datei
         private int idCounter = 1; // Für die ID-Erstellung
         private PunktVerwaltung punktVerwaltung = new PunktVerwaltung();
+        private List<(int spielNummer, string spielerID, int[] punkteProSpiel)> spielPunkte = new List<(int, string, int[])>();// Liste von Tupeln, die die Spielnummer, ID des Spielers und Punkte enthalten
 
         public NbrJug()
         {
             InitializeComponent();
             LadeSpieler(); // Spieler beim Start der Anwendung laden
         }
-        
+
+
+
+
+
+        //List<int[]> spielPunkte = new List<int[]>();
+        //List<int[]> gesamtPunkte = new List<int[]>();
+
         //Generiert einen eindeutigen Spielnamen
+
+        public string GeneriereSpielNummer()
+        {
+            // Prüfe, ob das Datum gewechselt hat
+            if (DateTime.Today != aktuellesDatum)
+            {
+                aktuellesDatum = DateTime.Today;
+                partieZaehler = 1; // Zurücksetzen des Partiezählers für den neuen Tag
+            }
+
+            // Generiere die Spielnummer basierend auf Datum, Partiezähler und Spielnummer
+            string spielNummerFinal = $"{aktuellesDatum:yyMMdd}{partieZaehler:D2}{spielNummer:D2}";
+
+            return spielNummerFinal;
+        }
+/****************
         public string GeneriereSpielName(int spielNummer)
         {
             string spielName = $"{aktuellesDatum}{zaehler:D2}{spielNummer:D2}";
@@ -42,26 +66,29 @@ namespace Romme_V2
            //return $"{aktuellesDatum}{zaehler:D2}{spielNummer:D2}";
             return spielName;
         }
-       
+ **************/       
         // Speichert Spielinformationen in der CSV-Datei
-        private void SpielSpeichern(string spielName, List<(string spielerID, int punkte)> spielerDaten)
+        private void SpielSpeichern(string dateiPfad)
         {
-            using (StreamWriter writer = new StreamWriter(dateiPfad, true)) // 'true' fügt an bestehende Datei an
+            using (StreamWriter writer = new StreamWriter(dateiPfad, true)) // 'true' fügt Daten an die Datei an
             {
-                foreach (var spieler in spielerDaten)
-
+                foreach (var spiel in spielPunkte)
                 {
-                    MessageBox.Show($"ID:{spieler.spielerID},Punkte: {spieler.punkte}");
-                    writer.WriteLine($"{spielName},{spieler.spielerID},{spieler.punkte}");
+                    for (int i = 0; i < spiel.punkteProSpiel.Length; i++)
+                    {
+                        // Format: Spielnummer, SpielerID, Punkte des Spielers
+                        writer.WriteLine($"{spiel.spielNummer}, {spiel.spielerID}, {spiel.punkteProSpiel[i]}");
+                    }
                 }
             }
         }
 
 
+
         private void clcBtn_Click(object sender, EventArgs e)
         {
-            MessageBox.Show($"SpielID: {GeneriereSpielName(spielNummer)}");
-            SpielSpeichern(GeneriereSpielName(spielNummer), new List<(string spielerID, int punkte)>());
+            MessageBox.Show($"SpielID: {GeneriereSpielNummer()}");
+           // SpielSpeichern(GeneriereSpielName(spielNummer), new List<(string spielerID, int punkte)>());
 
 
 
@@ -71,8 +98,7 @@ namespace Romme_V2
 
             string[] pointsFields = { pointsPl1.Text, pointsPl2.Text, pointsPl3.Text, pointsPl4.Text, pointsPl5.Text };
             string[] sumFields = { sumPl1.Text, sumPl2.Text, sumPl3.Text, sumPl4.Text, sumPl5.Text };
-            List<int[]> spielPunkte = new List<int[]>();
-            //List<int[]> gesamtPunkte = new List<int[]>();
+            
 
             ErrorHandling.FehlerbehandlungPunkte(pointsFields, numPlayer);//Fehlerbehandlung für falsche Punkteeingabe, 
 
@@ -88,12 +114,25 @@ namespace Romme_V2
 
                 }
             }
-
+            string punkteAnzeigen = string.Join(", ", punkteProSpiel);
+            MessageBox.Show($"Die Punkte pro Spieler sind: {punkteAnzeigen}", "Punkte anzeigen", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
             //Füge das Array mit den Punkten des aktuellen Spiels zur Liste hinzu
-            spielPunkte.Add(punkteProSpiel);
+            spielPunkte.Add((spielNummer, "SpielerID123", (int[])punkteProSpiel.Clone()));
 
-            // Textfelder werden auf " " gesetzt
+            //spielPunkte.Add(punkteProSpiel);
+
+            string ausgabe = "";
+            foreach (var spiel in spielPunkte)
+            {
+                for (int i = 0; i < spiel.punkteProSpiel.Length; i++)
+                {
+                    ausgabe += $"Spielnummer: {spiel.spielNummer}, SpielerID: {spiel.spielerID}, Punkte: {spiel.punkteProSpiel[i]}{Environment.NewLine}";
+                }
+            }
+            MessageBox.Show(ausgabe, "Überprüfung der Liste");
+
+           // Textfelder werden auf " " gesetzt
             ResetPointsFieldsText(new System.Windows.Forms.TextBox[] { pointsPl1, pointsPl2, pointsPl3, pointsPl4, pointsPl5 });
             
 
@@ -236,6 +275,7 @@ namespace Romme_V2
 
         private void button2_Click(object sender, EventArgs e)
         {
+            SpielSpeichern(dateiPfad);
             pointsPl1.Enabled = false;
             pointsPl2.Enabled = false;
             pointsPl3.Enabled = false;
@@ -506,7 +546,7 @@ namespace Romme_V2
         }
         public void PunktListeErstellen(List<int[]> gesamtPunkte)
         {
-            // Punkte anzeigen und Gewinner mit x ausweisen
+              //GesamtPunkte anzeigen und Gewinner mit x ausweisen
             for (int i = 0; i < gesamtPunkte.Count; i++)
             {
                 gesamtPunkteString.Append($"Spiel {i + 1}".PadRight(10));
