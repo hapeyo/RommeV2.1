@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,11 +13,13 @@ namespace Romme_V2
 {
     public partial class NewPlayerForm : Form
     {
-        public NewPlayerForm()
+        private string filePath;
+        public NewPlayerForm(string filePath)
         {
             InitializeComponent();
+            this.filePath = filePath;
         }
-       public Spieler Spieler { get; private set; } //Verbindung zur Spieler Klasse
+        public Spieler Spieler { get; private set; } //Verbindung zur Spieler Klasse
         private void btnOK_Click(object sender, EventArgs e)
         {
             Spieler = new Spieler
@@ -30,8 +33,7 @@ namespace Romme_V2
             this.DialogResult = DialogResult.OK;
             this.Close();
 
-        }
 
-        
+        }
     }
 }

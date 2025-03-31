@@ -74,7 +74,6 @@
             this.player1.TabIndex = 0;
             this.player1.Text = "Jugador/a";
             this.player1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.player1.Click += new System.EventHandler(this.player1_Click);
             // 
             // player2
             // 
@@ -86,7 +85,6 @@
             this.player2.TabIndex = 1;
             this.player2.Text = "Jugador/a";
             this.player2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.player2.Click += new System.EventHandler(this.player2_Click);
             // 
             // player3
             // 
@@ -98,7 +96,6 @@
             this.player3.TabIndex = 2;
             this.player3.Text = "Jugador/a";
             this.player3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.player3.Click += new System.EventHandler(this.player3_Click);
             // 
             // player4
             // 
@@ -110,7 +107,6 @@
             this.player4.TabIndex = 3;
             this.player4.Text = "Jugador/a";
             this.player4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.player4.Click += new System.EventHandler(this.player4_Click);
             // 
             // player5
             // 
@@ -122,7 +118,6 @@
             this.player5.TabIndex = 4;
             this.player5.Text = "Jugador/a";
             this.player5.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.player5.Click += new System.EventHandler(this.player5_Click);
             // 
             // label1
             // 
@@ -310,7 +305,7 @@
             this.StopBtn.TabIndex = 22;
             this.StopBtn.Text = "Stop Juego";
             this.StopBtn.UseVisualStyleBackColor = true;
-            this.StopBtn.Click += new System.EventHandler(this.button2_Click);
+            this.StopBtn.Click += new System.EventHandler(this.StopBtn_Click);
             // 
             // CerrarApp
             // 
