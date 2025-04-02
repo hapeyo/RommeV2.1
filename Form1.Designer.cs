@@ -137,7 +137,6 @@
             this.pointsPl1.Size = new System.Drawing.Size(80, 35);
             this.pointsPl1.TabIndex = 1;
             this.pointsPl1.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.pointsPl1.TextChanged += new System.EventHandler(this.pointsPl1_TextChanged);
             // 
             // pointsPl2
             // 
