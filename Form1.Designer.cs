@@ -62,6 +62,7 @@
             this.lstPlayer = new System.Windows.Forms.ListBox();
             this.btnNewPlayer = new System.Windows.Forms.Button();
             this.lblDate = new System.Windows.Forms.Label();
+            this.btnPrintAnalyse = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // player1
@@ -72,6 +73,7 @@
             this.player1.Name = "player1";
             this.player1.Size = new System.Drawing.Size(160, 35);
             this.player1.TabIndex = 0;
+            this.player1.Tag = "\" \"";
             this.player1.Text = "Jugador/a";
             this.player1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -83,6 +85,7 @@
             this.player2.Name = "player2";
             this.player2.Size = new System.Drawing.Size(160, 35);
             this.player2.TabIndex = 1;
+            this.player2.Tag = "\" \"";
             this.player2.Text = "Jugador/a";
             this.player2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -94,6 +97,7 @@
             this.player3.Name = "player3";
             this.player3.Size = new System.Drawing.Size(160, 35);
             this.player3.TabIndex = 2;
+            this.player3.Tag = "\" \"";
             this.player3.Text = "Jugador/a";
             this.player3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -105,6 +109,7 @@
             this.player4.Name = "player4";
             this.player4.Size = new System.Drawing.Size(160, 35);
             this.player4.TabIndex = 3;
+            this.player4.Tag = "\" \"";
             this.player4.Text = "Jugador/a";
             this.player4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -116,6 +121,7 @@
             this.player5.Name = "player5";
             this.player5.Size = new System.Drawing.Size(160, 35);
             this.player5.TabIndex = 4;
+            this.player5.Tag = "\" \"";
             this.player5.Text = "Jugador/a";
             this.player5.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -291,7 +297,7 @@
             this.strtJuego.Name = "strtJuego";
             this.strtJuego.Size = new System.Drawing.Size(200, 40);
             this.strtJuego.TabIndex = 21;
-            this.strtJuego.Text = "Start Juego";
+            this.strtJuego.Text = "Start Partido";
             this.strtJuego.UseVisualStyleBackColor = true;
             this.strtJuego.Click += new System.EventHandler(this.strtJuego_Click);
             // 
@@ -302,7 +308,7 @@
             this.StopBtn.Name = "StopBtn";
             this.StopBtn.Size = new System.Drawing.Size(200, 40);
             this.StopBtn.TabIndex = 22;
-            this.StopBtn.Text = "Stop Juego";
+            this.StopBtn.Text = "Stop Partido";
             this.StopBtn.UseVisualStyleBackColor = true;
             this.StopBtn.Click += new System.EventHandler(this.StopBtn_Click);
             // 
@@ -425,12 +431,24 @@
             this.lblDate.Size = new System.Drawing.Size(150, 35);
             this.lblDate.TabIndex = 35;
             // 
+            // btnPrintAnalyse
+            // 
+            this.btnPrintAnalyse.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnPrintAnalyse.Location = new System.Drawing.Point(455, 246);
+            this.btnPrintAnalyse.Name = "btnPrintAnalyse";
+            this.btnPrintAnalyse.Size = new System.Drawing.Size(200, 80);
+            this.btnPrintAnalyse.TabIndex = 36;
+            this.btnPrintAnalyse.Text = "Imprimir&& Analizar";
+            this.btnPrintAnalyse.UseVisualStyleBackColor = true;
+            this.btnPrintAnalyse.Click += new System.EventHandler(this.btnPrintAnalyse_Click);
+            // 
             // NbrJug
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(17F, 32F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlLight;
             this.ClientSize = new System.Drawing.Size(978, 544);
+            this.Controls.Add(this.btnPrintAnalyse);
             this.Controls.Add(this.lblDate);
             this.Controls.Add(this.btnNewPlayer);
             this.Controls.Add(this.lstPlayer);
@@ -511,6 +529,7 @@
         private System.Windows.Forms.ListBox lstPlayer;
         private System.Windows.Forms.Button btnNewPlayer;
         private System.Windows.Forms.Label lblDate;
+        private System.Windows.Forms.Button btnPrintAnalyse;
     }
 }
 

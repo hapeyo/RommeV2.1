@@ -22,24 +22,34 @@ namespace Romme_V2
         private List<int[]> gesamtPunkte = new List<int[]>();
         private DateTime aktuellesDatum = DateTime.Today;
         private int partieZaehler = 1;
-        private static string dateiPfad = "spiele.csv";
+        public static string dateiPfad = "spiele.csv";
         private List<Spieler> spielerListe = new List<Spieler>();
         private string filePath = "spielerdaten.csv"; // Pfad zur CSV-Datei
         private PunktVerwaltung punktVerwaltung = new PunktVerwaltung();
-        private List<(string spielNummerFinal, string spielerID, int[] punkteProSpiel)> spielPunkte = new List<(string, string, int[])>();// Liste von Tupeln, die die Spielnummer, ID des Spielers und Punkte enthalten
-        
-       
+        private List<(string spielNummerFinal, string spielerID, int [] punkteProSpiel)> spielPunkte = new List<(string, string, int[])>();// Liste von Tupeln, die die Spielnummer, ID des Spielers und Punkte enthalten
+        private System.Windows.Forms.Label[] players;
 
         public NbrJug()
         {
             InitializeComponent();
             LadeSpieler();
+            InitializePlayers();
 
-           
+
         }
-         
-        //Generiert einen eindeutigen Spielnamen
-        public string GeneriereSpielNummer()
+        private void InitializePlayers()
+        {
+            players = new System.Windows.Forms.Label[] { player1, player2, player3, player4, player5 };
+        }
+
+        private void NbrJug_Load(object sender, EventArgs e)
+        {
+            lblDate.Text = DateTime.Now.ToString("dd.MM.yy");
+        }
+
+
+       
+        public string GeneriereSpielNummer() //Generiert einen eindeutigen Spielnamen
         {
             if (DateTime.Today != aktuellesDatum)
             {
@@ -49,22 +59,26 @@ namespace Romme_V2
             string spielNummerFinal = $"{aktuellesDatum:yyMMdd}{partieZaehler:D2}{spielNummer:D2}";
             return spielNummerFinal;
         }
-        // Zählt die Anzahl der Partien, die an einem Tag gespielt wurden und regelt den Partiezähler
-        private void PartieZaehler()
+        
+       
+        private void PartieZaehler() // Zählt die Anzahl der Partien, die an einem Tag gespielt wurden und regelt den Partiezähler
         {
             if (File.Exists(dateiPfad))
             {
                 string[] zeilen = File.ReadAllLines(dateiPfad);
-                string letzteZeile = zeilen[zeilen.Length - 1];
-                string spielnummerID = letzteZeile.Split(',')[0];
-                string datumTeil = spielnummerID.Substring(0, 6);// Die ersten sechs Zeichen der SpielnummerID extrahieren
-                string partiezaehlerTeil = spielnummerID.Substring(6, 2);// Die beiden Zeichen nach dem Datum extrahieren,partieZaehler
-                int result = Convert.ToInt32(partiezaehlerTeil);
-                string datumAktuell = DateTime.Now.ToString("yyMMdd");
-
-                if (datumTeil == datumAktuell)
+                if (zeilen.Length > 0) //Beim ersten Start der app ist die Datei Spiele noch leer
                 {
-                    partieZaehler = result + 1;
+                    string letzteZeile = zeilen[zeilen.Length - 1];
+                    string spielnummerID = letzteZeile.Split(',')[0];
+                    string datumTeil = spielnummerID.Substring(0, 6);
+                    string partiezaehlerTeil = spielnummerID.Substring(6, 2);
+                    int result = Convert.ToInt32(partiezaehlerTeil);
+                    string datumAktuell = DateTime.Now.ToString("yyMMdd");
+
+                    if (datumTeil == datumAktuell)
+                    {
+                        partieZaehler = result + 1;
+                    }
                 }
             }
         }
@@ -72,8 +86,7 @@ namespace Romme_V2
         // Speichert Spielinformationen in der CSV-Datei
         private void SpielSpeichern(string dateiPfad)
         {
-            DialogResult result = MessageBox.Show("Guardar el partido?", "Verificación", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
+            DialogResult result = MessageBox.Show("Guardar el partido?  Cuidado, si elige [no], los datos de este partido estan borrados!", "Verificación", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (result == DialogResult.Yes)
             {
                 MessageBox.Show("Guardando partido!");
@@ -91,39 +104,61 @@ namespace Romme_V2
             }
             else
             {
-                MessageBox.Show("OK, este partido no esta guardado.");
+                MessageBox.Show("OK, este partido no esta guardado y los datos estan borados.");
             }
 
             
         }
-
+        
         //Das ist die Berechnung der Punkte, nach Eingabe der Punkte wird
         //die Summe aus allen Spielen angezeigt und die Eingabefelder werden wieder auf 
-        //Null gesetzt
+        //Null gesetzt.Ausserdem wird der Punkt fürs Kartenausteilen weitergesetzt
         private void clcBtn_Click(object sender, EventArgs e)
         {
             string spielNummerFinal = GeneriereSpielNummer();
             string[] pointsFields = { pointsPl1.Text, pointsPl2.Text, pointsPl3.Text, pointsPl4.Text, pointsPl5.Text };
             string[] sumFields = { sumPl1.Text, sumPl2.Text, sumPl3.Text, sumPl4.Text, sumPl5.Text };
+            string[] spielerIDs = {
+                                    player1?.Tag != null ? player1.Tag.ToString() : string.Empty,
+                                    player2?.Tag != null ? player2.Tag.ToString() : string.Empty,
+                                    player3?.Tag != null ? player3.Tag.ToString() : string.Empty,
+                                    player4?.Tag != null ? player4.Tag.ToString() : string.Empty,
+                                    player5?.Tag != null ? player5.Tag.ToString() : string.Empty
+};
 
+            //string alleSpielerIDs = $"{spielerIDs[0]}, {spielerIDs[1]}, {spielerIDs[2]}";
+            
+            
+            
             if (!ErrorHandling.FehlerbehandlungPunkte(pointsFields, numPlayer))
             {
                 return; // Stoppe die Ausführung, wenn ein Fehler gefunden wird
             }
 
-            // Punkte array für das aktuelle Spiel
+            // Punkte array für das aktuelle Spiel und spielerID
             int[] punkteProSpiel = new int[numPlayer]; // Punkte pro Spieler für das aktuelle Spiel
+
+
+
             for (int i = 0; i < numPlayer; i++)
             {
+                string spielerID = spielerIDs[i];
+                int punkte = 0;
+
                 if (pointsFields[i] != " " && Int32.TryParse(pointsFields[i], out int v))
                 {
+                    
                     punkteProSpiel[i] = v;
+                    punkte = v;
+                    
                 }
+             //Füge das Array mit den Punkten des aktuellen Spiels zur Liste hinzu
+                spielPunkte.Add((spielNummerFinal, spielerID, new int[]{ punkte }));
+
             }
-            string punkteAnzeigen = string.Join(", ", punkteProSpiel);
-           
-            //Füge das Array mit den Punkten des aktuellen Spiels zur Liste hinzu
-            spielPunkte.Add((spielNummerFinal, "spielerID", (int[])punkteProSpiel.Clone()));
+            //string punkteAnzeigen = string.Join(", ", punkteProSpiel);
+
+
             string ausgabe = "";
             foreach (var spiel in spielPunkte)
             {
@@ -135,7 +170,7 @@ namespace Romme_V2
             MessageBox.Show(ausgabe, "Überprüfung der Liste");
 
             ResetPointsFieldsText(new System.Windows.Forms.TextBox[] { pointsPl1, pointsPl2, pointsPl3, pointsPl4, pointsPl5 });
-            
+
             // Füge die Punkte für das aktuelle Spiel zum Array hinzu
             int[] rechnungGesamt = new int[numPlayer];
             for (int i = 0; i < numPlayer; i++)
@@ -159,16 +194,14 @@ namespace Romme_V2
             // Dies ist der Spielezaehler
             ++spielNummer;
             gameCtr.Text = spielNummer.ToString();
-         
+
             UpdateGeber();
         }
-
         private void UpdateGeber()
         {
             // array für Geber
             RadioButton[] cckBarajes = { cckBaraje1, cckBaraje2, cckBaraje3, cckBaraje4, cckBaraje5 };
-            // array für Spieler
-            System.Windows.Forms.Label[] players = { player1, player2, player3, player4, player5 };
+            
 
             for (int k = 0; k < cckBarajes.Length - 1; k++)
             {
@@ -185,26 +218,26 @@ namespace Romme_V2
                     }
                     return;
                 }
-            if (cckBarajes[cckBarajes.Length - 1].Checked)
-            {
-                cckBarajes[cckBarajes.Length - 1].Checked = false;
-                cckBarajes[0].Checked = true;
-                
+                if (cckBarajes[cckBarajes.Length - 1].Checked)
+                {
+                    cckBarajes[cckBarajes.Length - 1].Checked = false;
+                    cckBarajes[0].Checked = true;
+
+                }
             }
         }
-    }
         
-        private void strtJuego_Click(object sender, EventArgs e)
-        {
+         private void strtJuego_Click(object sender, EventArgs e)
+         {
 
             System.Windows.Forms.Label[] players = { player1, player2, player3, player4, player5 };
             System.Windows.Forms.TextBox[] pointsFields = { pointsPl1, pointsPl2, pointsPl3, pointsPl4, pointsPl5 };
             System.Windows.Forms.Label[] sumFields = { sumPl1, sumPl2, sumPl3, sumPl4, sumPl5 };
             ++spielNummer;
             gameCtr.Text = spielNummer.ToString();
-            //Pruefen ob mehrere Partien am gleichen Tag gespielt werden um SpielnummerID anzupassen
+            
             PartieZaehler();
-            // Pruefen ob numPlayer korrekt ist
+            
             if (numPlayer <= 1)
             {
                 MessageBox.Show("Por favor añade por lo menos dos jugadores antes de start.");
@@ -212,7 +245,7 @@ namespace Romme_V2
             }
             
             txtNewPl.Enabled = false;
-            
+            btnPrintAnalyse.Enabled = false;
             pointsPl1.Enabled = true;
             pointsPl2.Enabled = true;
             pointsPl3.Enabled = true;
@@ -229,10 +262,10 @@ namespace Romme_V2
             }
             strtJuego.Enabled = false;
             cckBaraje1.Checked = true;
-        }
+         }
 
-        private void StopBtn_Click(object sender, EventArgs e)
-        {
+         private void StopBtn_Click(object sender, EventArgs e)
+         {
             SpielSpeichern(dateiPfad);
             pointsPl1.Enabled = false;
             pointsPl2.Enabled = false;
@@ -241,7 +274,7 @@ namespace Romme_V2
             pointsPl5.Enabled = false;
             txtNewPl.Enabled = true;
             ResetPointsFieldsText(new System.Windows.Forms.TextBox[]{ pointsPl1,pointsPl2,pointsPl3,pointsPl4,pointsPl5});
-
+            btnPrintAnalyse.Enabled = true;
             CerrarApp.Enabled = true;
             gameCtr.Text = "0";
             ResetPlayerNames();
@@ -257,9 +290,9 @@ namespace Romme_V2
             numPlayer = 0;
             spielNummer = 0;
 
-        }
-        private void ResetPlayerNames()
-        {
+         }
+         private void ResetPlayerNames()
+         {
             player1.Text = "Jugador/a";
             player2.Text = "Jugador/a";
             player3.Text = "Jugador/a";
@@ -270,7 +303,12 @@ namespace Romme_V2
             player3.ForeColor = ForeColor;
             player4.ForeColor = ForeColor;
             player5.ForeColor = ForeColor;
-        }
+            player1.Tag = " ";
+            player2.Tag = " ";
+            player3.Tag = " ";
+            player4.Tag = " ";
+            player5.Tag = " ";
+         }
 
         private void ResetSumFields()
         {
@@ -294,7 +332,7 @@ namespace Romme_V2
                 
             }
         }
-
+/**********************************+
         private void ShowGesamtPunkte(string[] spielerNamen, List<int[]> gesamtPunkte)
         {
             punktVerwaltung.SpielerNamenAnzeigen(spielerNamen);
@@ -302,7 +340,8 @@ namespace Romme_V2
             MessageBox.Show(punktVerwaltung.gesamtPunkteString.ToString(), "Gesamtpunkte");
             punktVerwaltung.gesamtPunkteString.Clear();
         }
-         private void showPlaylist_Click(object sender, EventArgs e)
+**************************/
+        private void showPlaylist_Click(object sender, EventArgs e)
         {
             string[] spielerNamen = new string[numPlayer];
             for (int i = 0; i < numPlayer; i++)
@@ -319,7 +358,13 @@ namespace Romme_V2
             }
             string message = string.Join(Environment.NewLine, spielerNamen); // Neue Zeile pro Spielername
             
-            ShowGesamtPunkte(spielerNamen, gesamtPunkte);
+            //ShowGesamtPunkte(spielerNamen, gesamtPunkte);
+
+
+            punktVerwaltung.SpielerNamenAnzeigen(spielerNamen);
+            punktVerwaltung.PunktListeErstellen(gesamtPunkte);
+            MessageBox.Show(punktVerwaltung.gesamtPunkteString.ToString(), "Gesamtpunkte");
+            punktVerwaltung.gesamtPunkteString.Clear();
         }
 
         private void Cerrar_Click(object sender, EventArgs e)
@@ -358,14 +403,39 @@ namespace Romme_V2
         }
         private void lstPlayer_SelectedIndexChanged(object sender, EventArgs e)
         {
+
+            
+/***********************************
+            if (spielerListe == null || !spielerListe.Any())
+            {
+                MessageBox.Show("Die Spieler-Liste ist leer oder null!");
+                return;
+            }
+*******************/
             // Prüfen, ob ein Eintrag ausgewählt ist
             if (lstPlayer.SelectedItem != null)
             {
                 // Den ausgewählten Spieler aus der ListBox abrufen
                 var selectedSpieler = spielerListe.FirstOrDefault(s =>
                     $"{s.Vorname} {s.Nachname}" == lstPlayer.SelectedItem.ToString());
-                string spielerID = spielerListe.FirstOrDefault(s => s.Spitzname == "SpitznameDesSpielers")?.ID;
+                
+                /*******************************
+                if (selectedSpieler == null)
+                {
+                    MessageBox.Show("Kein passender Spieler für das ausgewählte Element gefunden.");
+                    return;
+                }
+               ***************************/
 
+
+
+                //string spielerID = spielerListe.FirstOrDefault(s => s.Spitzname == selectedSpieler.Spitzname)?.ID;
+                
+                //    MessageBox.Show(spielerID ?? "Keine Id für Spitznamen gefunden");
+               
+                
+                
+                
                 // Spitznamen im Label anzeigen
                 if (selectedSpieler != null)
                 {
@@ -376,6 +446,7 @@ namespace Romme_V2
                         if (label.Text == $"Jugador/a")
                         {
                             label.Text = $"{selectedSpieler.Spitzname}";
+                            label.Tag = $"{selectedSpieler.ID}";
                             txtNewPl.Text = "";
                             numPlayer++;
                             lstPlayer.Items.Clear();
@@ -386,7 +457,6 @@ namespace Romme_V2
                     if (numPlayer >= 2)
                     {
                         strtJuego.Enabled = true;
-                        strtJuego.Visible = true;
                     }
 
                 }
@@ -462,8 +532,17 @@ namespace Romme_V2
                         };
                     }).ToList();
             }
-            
+
+            foreach (var spieler in spielerListe)
+            {
+                MessageBox.Show($"Vorname: {spieler.Vorname}, Nachname: {spieler.Nachname}, Spitzname: {spieler.Spitzname}, ID: {spieler.ID}");
+            }
         }
+        public List<Spieler> GetSpielerListe()
+        {
+            return spielerListe; // Gibt die vorhandene Liste zurück
+        }
+
         private void SpeichereSpieler()
         {
             var lines = new List<string>
@@ -476,11 +555,17 @@ namespace Romme_V2
             File.WriteAllLines(filePath, lines);
         }
 
-        private void NbrJug_Load(object sender, EventArgs e)
+       
+        
+        private void btnPrintAnalyse_Click(object sender, EventArgs e)
         {
-            lblDate.Text = DateTime.Now.ToString("dd.MM.yy");
+            PrintAnalyseForm printForm = new PrintAnalyseForm(this); // Hauptform übergeben
+            printForm.Show(); // PrintAnalyseForm anzeigen
+            this.Hide(); // Form1 nur ausblenden
         }
+        
     }
+
     // Spieler-Klasse
     public class Spieler
     {
