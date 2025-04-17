@@ -94,7 +94,7 @@ namespace Romme_V2
                 {
                     foreach (var spiel in spielPunkte)
                     {
-                        MessageBox.Show($"Vor Speicherung - SpielerID: '{spiel.spielerID}' Länge: {spiel.spielerID.Length}");
+                      
                         for (int i = 0; i < spiel.punkteProSpiel.Length; i++)
                         {
                             // Format: Spielnummer, SpielerID, Punkte des Spielers
@@ -109,7 +109,7 @@ namespace Romme_V2
                 foreach (var zeile in File.ReadAllLines("spiele.csv").Skip(1))
                 {
                     var teile = zeile.Split(',');
-                    MessageBox.Show($"SpielerID aus Spiele.csv direkt nach speichern: '{teile[1]}' Länge: {teile[1].Length}");
+                    
                 }
 
             }
@@ -178,7 +178,7 @@ namespace Romme_V2
                     ausgabe += $"Spielnummer: {spiel.spielNummerFinal}, SpielerID: {spiel.spielerID}, Punkte: {spiel.punkteProSpiel[i]}{Environment.NewLine}";
                 }
             }
-            MessageBox.Show(ausgabe, "Überprüfung der Liste");
+            //MessageBox.Show(ausgabe, "Überprüfung der Liste");
 
             ResetPointsFieldsText(new System.Windows.Forms.TextBox[] { pointsPl1, pointsPl2, pointsPl3, pointsPl4, pointsPl5 });
 

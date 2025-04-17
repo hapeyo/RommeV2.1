@@ -31,6 +31,9 @@
             this.btnBackToMain = new System.Windows.Forms.Button();
             this.btnLastGame = new System.Windows.Forms.Button();
             this.dGVLastPartie = new System.Windows.Forms.DataGridView();
+            this.btnOtherGame = new System.Windows.Forms.Button();
+            this.cbBSpielnummer = new System.Windows.Forms.ComboBox();
+            this.btIPrintPdf = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dGVLastPartie)).BeginInit();
             this.SuspendLayout();
             // 
@@ -66,11 +69,44 @@
             this.dGVLastPartie.Size = new System.Drawing.Size(766, 127);
             this.dGVLastPartie.TabIndex = 3;
             // 
+            // btnOtherGame
+            // 
+            this.btnOtherGame.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnOtherGame.Location = new System.Drawing.Point(29, 197);
+            this.btnOtherGame.Name = "btnOtherGame";
+            this.btnOtherGame.Size = new System.Drawing.Size(300, 40);
+            this.btnOtherGame.TabIndex = 4;
+            this.btnOtherGame.Text = "Mostrar otros partidos";
+            this.btnOtherGame.UseVisualStyleBackColor = true;
+            this.btnOtherGame.Click += new System.EventHandler(this.btnOtherGame_Click);
+            // 
+            // cbBSpielnummer
+            // 
+            this.cbBSpielnummer.FormattingEnabled = true;
+            this.cbBSpielnummer.Location = new System.Drawing.Point(74, 243);
+            this.cbBSpielnummer.Name = "cbBSpielnummer";
+            this.cbBSpielnummer.Size = new System.Drawing.Size(200, 28);
+            this.cbBSpielnummer.TabIndex = 5;
+            // 
+            // btIPrintPdf
+            // 
+            this.btIPrintPdf.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btIPrintPdf.Location = new System.Drawing.Point(305, 243);
+            this.btIPrintPdf.Name = "btIPrintPdf";
+            this.btIPrintPdf.Size = new System.Drawing.Size(250, 35);
+            this.btIPrintPdf.TabIndex = 6;
+            this.btIPrintPdf.Text = "Imprimir PDF";
+            this.btIPrintPdf.UseVisualStyleBackColor = true;
+            this.btIPrintPdf.Click += new System.EventHandler(this.btIPrintPdf_Click);
+            // 
             // PrintAnalyseForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.btIPrintPdf);
+            this.Controls.Add(this.cbBSpielnummer);
+            this.Controls.Add(this.btnOtherGame);
             this.Controls.Add(this.dGVLastPartie);
             this.Controls.Add(this.btnLastGame);
             this.Controls.Add(this.btnBackToMain);
@@ -87,5 +123,8 @@
         private System.Windows.Forms.Button btnBackToMain;
         private System.Windows.Forms.Button btnLastGame;
         private System.Windows.Forms.DataGridView dGVLastPartie;
+        private System.Windows.Forms.Button btnOtherGame;
+        private System.Windows.Forms.ComboBox cbBSpielnummer;
+        private System.Windows.Forms.Button btIPrintPdf;
     }
 }

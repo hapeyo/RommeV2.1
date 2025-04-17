@@ -46,15 +46,12 @@ public partial class PrintAnalyseForm : Form
        foreach (var zeile in File.ReadAllLines("spielerdaten.csv").Skip(1))
 {
     var teile = zeile.Split(',');
-    //MessageBox.Show($"SpielerID aus Spielerdaten.csv: '{teile[0]}' Länge: {teile[0].Length}");
-}
-
+    
             if (!File.Exists(dateiPfad))
             return new List<Spiel>();
             foreach (var teile in File.ReadAllLines(NbrJug.dateiPfad).Skip(1))
             {
                 var daten = teile.Split(',');
-               // MessageBox.Show($"Eingelesene SpielerID: '{daten[1]}' - Länge: {daten[1].Length}");
             }
 
             return File.ReadAllLines(dateiPfad)
@@ -73,8 +70,8 @@ public partial class PrintAnalyseForm : Form
            
         }
 
-        
-        private void DruckenLetztePartie()
+               
+        private void druckenBestimmtePartie()
         {
             // 1️⃣ Letzte Spielnummer bestimmen
             string letzteZeile = spieleListe.Last().Spielnummer;
@@ -152,7 +149,9 @@ public partial class PrintAnalyseForm : Form
         private void DruckenAlsPDF()//diese Methode gibt ein verbessertes PDF aus
         {
             Document doc = new Document();
-            string pfad = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "LetztePartie.pdf");
+            string dateiNameRaw = spieleListe.Last().Spielnummer.Substring(0, 8);
+            string dateiName = $"Romme{dateiNameRaw}.pdf"; 
+            string pfad = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), dateiName);
 
             using (FileStream fs = new FileStream(pfad, FileMode.Create))
             {
@@ -213,6 +212,7 @@ public partial class PrintAnalyseForm : Form
                      )
                 .OrderBy(spiel => spiel.Summe)
                 .ToList();
+
                 // Tabelle für das Siegertreppchen mit drei Spalten
                 PdfPTable podiumTable = new PdfPTable(new float[] { 1f, 0.7f, 1f }); // Mitte schmaler für engeres Layout
                 podiumTable.WidthPercentage = 40; // Engeres Layout
@@ -301,7 +301,39 @@ public partial class PrintAnalyseForm : Form
 
         private void btnLastGame_Click(object sender, EventArgs e)
         {
-            DruckenLetztePartie();
+            //Letzte Spielnummer bestimmen
+            string letzteZeile = spieleListe.Last().Spielnummer;
+            string spielPrefix = letzteZeile.Substring(0, 8);
+            druckenBestimmtePartie();
+
+        }
+        private List<string> HoleAlleSpielPrefixe()
+        {
+            return spieleListe
+                .Select(spiel => spiel.Spielnummer.Substring(0, 8)) // Nur die ersten 8 Zeichen der Spielnummer
+                .Distinct() // Doppelte Spielnummern-Präfixe entfernen
+                .OrderByDescending(spielPrefix => spielPrefix) // Sortierung nach Datum (neueste zuerst)
+                .ToList();
+        }
+        private void btnOtherGame_Click(object sender, EventArgs e)
+        {
+            // Liste mit allen verfügbaren Spielnummern-Präfixen abrufen
+            List<string> spielPrefixe = HoleAlleSpielPrefixe();
+
+            // ComboBox leeren und neu befüllen
+            cbBSpielnummer.Items.Clear();
+            cbBSpielnummer.Items.AddRange(spielPrefixe.ToArray());
+
+            // Erste Option auswählen (optional)
+            if (cbBSpielnummer.Items.Count > 0)
+            {
+                cbBSpielnummer.SelectedIndex = 0;
+            }
+        }
+
+        private void btIPrintPdf_Click(object sender, EventArgs e)
+        {
+
         }
     }
 
