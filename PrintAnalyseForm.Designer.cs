@@ -30,7 +30,8 @@
         {
             this.btnBackToMain = new System.Windows.Forms.Button();
             this.btnLastGame = new System.Windows.Forms.Button();
-            this.lstErgebnisse = new System.Windows.Forms.ListBox();
+            this.dGVLastPartie = new System.Windows.Forms.DataGridView();
+            ((System.ComponentModel.ISupportInitialize)(this.dGVLastPartie)).BeginInit();
             this.SuspendLayout();
             // 
             // btnBackToMain
@@ -55,26 +56,28 @@
             this.btnLastGame.UseVisualStyleBackColor = true;
             this.btnLastGame.Click += new System.EventHandler(this.btnLastGame_Click);
             // 
-            // lstErgebnisse
+            // dGVLastPartie
             // 
-            this.lstErgebnisse.FormattingEnabled = true;
-            this.lstErgebnisse.ItemHeight = 20;
-            this.lstErgebnisse.Location = new System.Drawing.Point(527, 23);
-            this.lstErgebnisse.Name = "lstErgebnisse";
-            this.lstErgebnisse.Size = new System.Drawing.Size(120, 84);
-            this.lstErgebnisse.TabIndex = 2;
+            this.dGVLastPartie.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dGVLastPartie.Location = new System.Drawing.Point(12, 64);
+            this.dGVLastPartie.Name = "dGVLastPartie";
+            this.dGVLastPartie.RowHeadersWidth = 62;
+            this.dGVLastPartie.RowTemplate.Height = 28;
+            this.dGVLastPartie.Size = new System.Drawing.Size(766, 127);
+            this.dGVLastPartie.TabIndex = 3;
             // 
             // PrintAnalyseForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.lstErgebnisse);
+            this.Controls.Add(this.dGVLastPartie);
             this.Controls.Add(this.btnLastGame);
             this.Controls.Add(this.btnBackToMain);
             this.Name = "PrintAnalyseForm";
             this.Text = "Imprimir y Analizar";
             this.Load += new System.EventHandler(this.PrintAnalyseForm_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.dGVLastPartie)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -83,6 +86,6 @@
 
         private System.Windows.Forms.Button btnBackToMain;
         private System.Windows.Forms.Button btnLastGame;
-        private System.Windows.Forms.ListBox lstErgebnisse;
+        private System.Windows.Forms.DataGridView dGVLastPartie;
     }
 }

@@ -94,13 +94,24 @@ namespace Romme_V2
                 {
                     foreach (var spiel in spielPunkte)
                     {
+                        MessageBox.Show($"Vor Speicherung - SpielerID: '{spiel.spielerID}' Länge: {spiel.spielerID.Length}");
                         for (int i = 0; i < spiel.punkteProSpiel.Length; i++)
                         {
                             // Format: Spielnummer, SpielerID, Punkte des Spielers
-                            writer.WriteLine($"{spiel.spielNummerFinal}, {spiel.spielerID}, {spiel.punkteProSpiel[i]}");
+                            //writer.WriteLine($"{spiel.spielNummerFinal}, {spiel.spielerID}, {spiel.punkteProSpiel[i]}");
+                           // writer.WriteLine($"{spiel.spielNummerFinal}, {spiel.spielerID.Trim()}, {spiel.punkteProSpiel[i]}");
+                            writer.WriteLine($"{spiel.spielNummerFinal},{spiel.spielerID.Trim()},{spiel.punkteProSpiel[i]}");
+
+
                         }
                     }
                 }
+                foreach (var zeile in File.ReadAllLines("spiele.csv").Skip(1))
+                {
+                    var teile = zeile.Split(',');
+                    MessageBox.Show($"SpielerID aus Spiele.csv direkt nach speichern: '{teile[1]}' Länge: {teile[1].Length}");
+                }
+
             }
             else
             {
@@ -235,7 +246,7 @@ namespace Romme_V2
             System.Windows.Forms.Label[] sumFields = { sumPl1, sumPl2, sumPl3, sumPl4, sumPl5 };
             ++spielNummer;
             gameCtr.Text = spielNummer.ToString();
-            
+            CerrarApp.Enabled = false;
             PartieZaehler();
             
             if (numPlayer <= 1)
@@ -332,15 +343,7 @@ namespace Romme_V2
                 
             }
         }
-/**********************************+
-        private void ShowGesamtPunkte(string[] spielerNamen, List<int[]> gesamtPunkte)
-        {
-            punktVerwaltung.SpielerNamenAnzeigen(spielerNamen);
-            punktVerwaltung.PunktListeErstellen(gesamtPunkte);
-            MessageBox.Show(punktVerwaltung.gesamtPunkteString.ToString(), "Gesamtpunkte");
-            punktVerwaltung.gesamtPunkteString.Clear();
-        }
-**************************/
+
         private void showPlaylist_Click(object sender, EventArgs e)
         {
             string[] spielerNamen = new string[numPlayer];
@@ -358,9 +361,7 @@ namespace Romme_V2
             }
             string message = string.Join(Environment.NewLine, spielerNamen); // Neue Zeile pro Spielername
             
-            //ShowGesamtPunkte(spielerNamen, gesamtPunkte);
-
-
+            
             punktVerwaltung.SpielerNamenAnzeigen(spielerNamen);
             punktVerwaltung.PunktListeErstellen(gesamtPunkte);
             MessageBox.Show(punktVerwaltung.gesamtPunkteString.ToString(), "Gesamtpunkte");
@@ -381,7 +382,7 @@ namespace Romme_V2
             var gefilterteSpieler = spielerListe
                 .Where(s => s.Vorname.StartsWith(eingabe, StringComparison.OrdinalIgnoreCase))
                 .ToList();
-
+            CerrarApp.Enabled = false;
             // Liste aktualisieren
             lstPlayer.Items.Clear();
             foreach (var spieler in gefilterteSpieler)
@@ -532,11 +533,12 @@ namespace Romme_V2
                         };
                     }).ToList();
             }
-
+/***************************
             foreach (var spieler in spielerListe)
             {
                 MessageBox.Show($"Vorname: {spieler.Vorname}, Nachname: {spieler.Nachname}, Spitzname: {spieler.Spitzname}, ID: {spieler.ID}");
             }
+*************/
         }
         public List<Spieler> GetSpielerListe()
         {
@@ -563,7 +565,11 @@ namespace Romme_V2
             printForm.Show(); // PrintAnalyseForm anzeigen
             this.Hide(); // Form1 nur ausblenden
         }
-        
+
+        private void player1_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 
     // Spieler-Klasse
