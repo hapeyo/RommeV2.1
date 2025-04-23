@@ -87,6 +87,7 @@
             this.cbBSpielnummer.Name = "cbBSpielnummer";
             this.cbBSpielnummer.Size = new System.Drawing.Size(200, 28);
             this.cbBSpielnummer.TabIndex = 5;
+            this.cbBSpielnummer.SelectedIndexChanged += new System.EventHandler(this.cbBSpielnummer_SelectedIndexChanged);
             // 
             // btIPrintPdf
             // 
