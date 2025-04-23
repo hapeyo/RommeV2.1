@@ -76,6 +76,7 @@
             this.player1.Tag = "\" \"";
             this.player1.Text = "Jugador/a";
             this.player1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.player1.Click += new System.EventHandler(this.player1_Click);
             // 
             // player2
             // 
@@ -314,7 +315,6 @@
             // 
             // CerrarApp
             // 
-            this.CerrarApp.Enabled = false;
             this.CerrarApp.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.CerrarApp.Location = new System.Drawing.Point(763, 497);
             this.CerrarApp.Name = "CerrarApp";
