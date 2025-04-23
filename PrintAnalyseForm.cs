@@ -17,65 +17,54 @@ using System.Diagnostics;
 namespace Romme_V2
 {
    
-public partial class PrintAnalyseForm : Form
-{
-    private NbrJug mainForm;
-    private List<Spieler> spielerListe;
-    private List<Spiel> spieleListe;
-
-    public PrintAnalyseForm(NbrJug form1)
+    public partial class PrintAnalyseForm : Form
     {
+        private NbrJug mainForm;
+        private List<Spieler> spielerListe;
+        private List<Spiel> spieleListe;
+        private string spielZeile;
+        public PrintAnalyseForm(NbrJug form1)
+        {
         InitializeComponent();
         mainForm = form1;
         spielerListe = mainForm.GetSpielerListe();
         spieleListe = LadeSpiele(NbrJug.dateiPfad);
         this.Load += PrintAnalyseForm_Load; // OnLoad verknüpft
-    }
+        }
 
-    private void PrintAnalyseForm_Load(object sender, EventArgs e)
-    {
+        private void PrintAnalyseForm_Load(object sender, EventArgs e)
+        {
         string spieleDateiPfad = NbrJug.dateiPfad; // Pfad aus NbrJug holen
         spieleListe = LadeSpiele(spieleDateiPfad); // Spiele laden
 
        
 
-    }
-
-    public List<Spiel> LadeSpiele(string dateiPfad)
-    {
-       foreach (var zeile in File.ReadAllLines("spielerdaten.csv").Skip(1))
-{
-    var teile = zeile.Split(',');
-    
+        }
+        public List<Spiel> LadeSpiele(string dateiPfad)
+        {
             if (!File.Exists(dateiPfad))
-            return new List<Spiel>();
-            foreach (var teile in File.ReadAllLines(NbrJug.dateiPfad).Skip(1))
-            {
-                var daten = teile.Split(',');
-            }
+                return new List<Spiel>();
 
             return File.ReadAllLines(dateiPfad)
-                   .Skip(1)
-                   .Select(line =>
-                   {
-                       var teile = line.Split(',');
-                       return new Spiel
-                       {
-                           Spielnummer = teile[0],
-                           SpielerID = teile[1],
-                           Punkte = string.IsNullOrWhiteSpace(teile[2]) ? 0 : int.Parse(teile[2])
-                       };
-                   })
-                   .ToList();
-           
+                .Skip(1)
+                .Select(line =>
+                {
+                    var daten = line.Split(',');
+                    return new Spiel
+                    {
+                        Spielnummer = daten[0],
+                        SpielerID = daten[1],
+                        Punkte = string.IsNullOrWhiteSpace(daten[2]) ? 0 : int.Parse(daten[2])
+                    };
+                })
+                .ToList();
         }
-
-               
+        
         private void druckenBestimmtePartie()
         {
             // 1️⃣ Letzte Spielnummer bestimmen
-            string letzteZeile = spieleListe.Last().Spielnummer;
-            string spielPrefix = letzteZeile.Substring(0, 8);
+           // string spielZeile = spieleListe.Last().Spielnummer;
+           string spielPrefix = spielZeile.Substring(0, 8);
 
             // 2️⃣ Nur Spieler aus dem letzten Spiel herausfiltern
             var aktuelleSpiele = spieleListe
@@ -302,8 +291,8 @@ public partial class PrintAnalyseForm : Form
         private void btnLastGame_Click(object sender, EventArgs e)
         {
             //Letzte Spielnummer bestimmen
-            string letzteZeile = spieleListe.Last().Spielnummer;
-            string spielPrefix = letzteZeile.Substring(0, 8);
+            spielZeile = spieleListe.Last().Spielnummer;
+           // string spielPrefix = spielZeile.Substring(0, 8);
             druckenBestimmtePartie();
 
         }
@@ -323,17 +312,29 @@ public partial class PrintAnalyseForm : Form
             // ComboBox leeren und neu befüllen
             cbBSpielnummer.Items.Clear();
             cbBSpielnummer.Items.AddRange(spielPrefixe.ToArray());
-
+             /**********
             // Erste Option auswählen (optional)
             if (cbBSpielnummer.Items.Count > 0)
             {
                 cbBSpielnummer.SelectedIndex = 0;
+            
             }
+             **********/
         }
 
         private void btIPrintPdf_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void cbBSpielnummer_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cbBSpielnummer.SelectedIndex != -1)
+            {
+                spielZeile = cbBSpielnummer.SelectedItem.ToString();
+                MessageBox.Show($"Gewählte Spielnummer: {spielZeile}");
+                druckenBestimmtePartie();
+            }
         }
     }
 

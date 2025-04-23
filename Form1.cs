@@ -292,6 +292,7 @@ namespace Romme_V2
             ResetSumFields();
             punktVerwaltung.StringBuilderLeeren();
             spielPunkte.Clear();
+            gesamtPunkte.Clear();
 
             cckBaraje1.Checked = true;
             cckBaraje2.Checked = false;
@@ -450,6 +451,7 @@ namespace Romme_V2
                             label.Tag = $"{selectedSpieler.ID}";
                             txtNewPl.Text = "";
                             numPlayer++;
+                            lstPlayer.Items.Remove(lstPlayer.SelectedItem);
                             lstPlayer.Items.Clear();
                             break;
                         }
@@ -533,12 +535,7 @@ namespace Romme_V2
                         };
                     }).ToList();
             }
-/***************************
-            foreach (var spieler in spielerListe)
-            {
-                MessageBox.Show($"Vorname: {spieler.Vorname}, Nachname: {spieler.Nachname}, Spitzname: {spieler.Spitzname}, ID: {spieler.ID}");
-            }
-*************/
+
         }
         public List<Spieler> GetSpielerListe()
         {
