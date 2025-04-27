@@ -52,7 +52,6 @@
             this.strtJuego = new System.Windows.Forms.Button();
             this.StopBtn = new System.Windows.Forms.Button();
             this.CerrarApp = new System.Windows.Forms.Button();
-            this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
             this.cckBaraje1 = new System.Windows.Forms.RadioButton();
             this.cckBaraje2 = new System.Windows.Forms.RadioButton();
             this.cckBaraje3 = new System.Windows.Forms.RadioButton();
@@ -63,6 +62,7 @@
             this.btnNewPlayer = new System.Windows.Forms.Button();
             this.lblDate = new System.Windows.Forms.Label();
             this.btnPrintAnalyse = new System.Windows.Forms.Button();
+            this.btnAdmin = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // player1
@@ -76,7 +76,6 @@
             this.player1.Tag = "\" \"";
             this.player1.Text = "Jugador/a";
             this.player1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.player1.Click += new System.EventHandler(this.player1_Click);
             // 
             // player2
             // 
@@ -324,16 +323,6 @@
             this.CerrarApp.UseVisualStyleBackColor = true;
             this.CerrarApp.Click += new System.EventHandler(this.Cerrar_Click);
             // 
-            // dateTimePicker1
-            // 
-            this.dateTimePicker1.CalendarMonthBackground = System.Drawing.SystemColors.Menu;
-            this.dateTimePicker1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.dateTimePicker1.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.dateTimePicker1.Location = new System.Drawing.Point(3, 507);
-            this.dateTimePicker1.Name = "dateTimePicker1";
-            this.dateTimePicker1.Size = new System.Drawing.Size(160, 35);
-            this.dateTimePicker1.TabIndex = 25;
-            // 
             // cckBaraje1
             // 
             this.cckBaraje1.BackColor = System.Drawing.SystemColors.ControlLight;
@@ -438,9 +427,20 @@
             this.btnPrintAnalyse.Name = "btnPrintAnalyse";
             this.btnPrintAnalyse.Size = new System.Drawing.Size(200, 80);
             this.btnPrintAnalyse.TabIndex = 36;
-            this.btnPrintAnalyse.Text = "Imprimir&& Analizar";
+            this.btnPrintAnalyse.Text = "Mostrar&& Analizar&&PDF";
             this.btnPrintAnalyse.UseVisualStyleBackColor = true;
             this.btnPrintAnalyse.Click += new System.EventHandler(this.btnPrintAnalyse_Click);
+            // 
+            // btnAdmin
+            // 
+            this.btnAdmin.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnAdmin.Location = new System.Drawing.Point(455, 343);
+            this.btnAdmin.Name = "btnAdmin";
+            this.btnAdmin.Size = new System.Drawing.Size(200, 46);
+            this.btnAdmin.TabIndex = 37;
+            this.btnAdmin.Text = "Administrator";
+            this.btnAdmin.UseVisualStyleBackColor = true;
+            this.btnAdmin.Click += new System.EventHandler(this.btnAdmin_Click);
             // 
             // NbrJug
             // 
@@ -448,6 +448,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlLight;
             this.ClientSize = new System.Drawing.Size(978, 544);
+            this.Controls.Add(this.btnAdmin);
             this.Controls.Add(this.btnPrintAnalyse);
             this.Controls.Add(this.lblDate);
             this.Controls.Add(this.btnNewPlayer);
@@ -458,7 +459,6 @@
             this.Controls.Add(this.cckBaraje3);
             this.Controls.Add(this.cckBaraje2);
             this.Controls.Add(this.cckBaraje1);
-            this.Controls.Add(this.dateTimePicker1);
             this.Controls.Add(this.CerrarApp);
             this.Controls.Add(this.StopBtn);
             this.Controls.Add(this.strtJuego);
@@ -519,7 +519,6 @@
         private System.Windows.Forms.Button strtJuego;
         private System.Windows.Forms.Button StopBtn;
         private System.Windows.Forms.Button CerrarApp;
-        private System.Windows.Forms.DateTimePicker dateTimePicker1;
         private System.Windows.Forms.RadioButton cckBaraje1;
         private System.Windows.Forms.RadioButton cckBaraje2;
         private System.Windows.Forms.RadioButton cckBaraje3;
@@ -530,6 +529,7 @@
         private System.Windows.Forms.Button btnNewPlayer;
         private System.Windows.Forms.Label lblDate;
         private System.Windows.Forms.Button btnPrintAnalyse;
+        private System.Windows.Forms.Button btnAdmin;
     }
 }
 

@@ -23,6 +23,8 @@ namespace Romme_V2
         private List<Spieler> spielerListe;
         private List<Spiel> spieleListe;
         private string spielZeile;
+        // Variable zum Nachverfolgen, ob die Auswahl programmgesteuert vorgenommen wurde
+        private bool programmaticSelection = false;
         public PrintAnalyseForm(NbrJug form1)
         {
         InitializeComponent();
@@ -138,7 +140,7 @@ namespace Romme_V2
         private void DruckenAlsPDF()//diese Methode gibt ein verbessertes PDF aus
         {
             Document doc = new Document();
-            string dateiNameRaw = spieleListe.Last().Spielnummer.Substring(0, 8);
+            string dateiNameRaw = spielZeile.Substring(0, 8);
             string dateiName = $"Romme{dateiNameRaw}.pdf"; 
             string pfad = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), dateiName);
 
@@ -151,11 +153,11 @@ namespace Romme_V2
                 doc.Add(new Paragraph("Rommé", FontFactory.GetFont(FontFactory.HELVETICA, 20, iTextSharp.text.Font.BOLD)));
 
                 // 🗓️ Datum aus Spielnummer extrahieren
-                string spielDatumRaw = spieleListe.Last().Spielnummer.Substring(0, 6);
+                string spielDatumRaw = spielZeile.Substring(0, 6);
                 string spielDatum = $"{spielDatumRaw.Substring(4, 2)}.{spielDatumRaw.Substring(2, 2)}.{spielDatumRaw.Substring(0, 2)}";
 
                 // Gesamtpartie aus Spielnummer extrahieren
-                string gesamtpartie = spieleListe.Last().Spielnummer.Substring(6, 2);
+                string gesamtpartie = spielZeile.Substring(6, 2);
 
                 // Datum und Gesamtpartie hinzufügen
                 doc.Add(new Paragraph($"Fecha del partido: {spielDatum}", FontFactory.GetFont(FontFactory.HELVETICA, 12)));
@@ -277,8 +279,7 @@ namespace Romme_V2
                
             }
 
-
-            MessageBox.Show($"PDF gespeichert unter: {pfad}");
+            MessageBox.Show($"PDF grabado en: {pfad}. Para imprimir usa un pdf Reader");
         }
        
         private void btnBackToMain_Click(object sender, EventArgs e)
@@ -312,24 +313,25 @@ namespace Romme_V2
             // ComboBox leeren und neu befüllen
             cbBSpielnummer.Items.Clear();
             cbBSpielnummer.Items.AddRange(spielPrefixe.ToArray());
-             /**********
+             
             // Erste Option auswählen (optional)
             if (cbBSpielnummer.Items.Count > 0)
             {
+                programmaticSelection = true; // Setzen Sie die Variable vor der Auswahl
                 cbBSpielnummer.SelectedIndex = 0;
-            
-            }
-             **********/
+                programmaticSelection = false; // Setzen Sie die Variable nach der Auswahl zurück
+                }
+             
         }
-
+/***********************+
         private void btIPrintPdf_Click(object sender, EventArgs e)
         {
 
         }
-
+********************/
         private void cbBSpielnummer_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (cbBSpielnummer.SelectedIndex != -1)
+            if (!programmaticSelection && cbBSpielnummer.SelectedIndex != -1)
             {
                 spielZeile = cbBSpielnummer.SelectedItem.ToString();
                 MessageBox.Show($"Gewählte Spielnummer: {spielZeile}");

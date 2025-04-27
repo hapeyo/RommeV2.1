@@ -563,9 +563,11 @@ namespace Romme_V2
             this.Hide(); // Form1 nur ausblenden
         }
 
-        private void player1_Click(object sender, EventArgs e)
+        private void btnAdmin_Click(object sender, EventArgs e)
         {
-
+            AdminForm adminForm = new AdminForm(this); // Hauptform übergeben
+            adminForm.Show(); // PrintAnalyseForm anzeigen
+            this.Hide(); // Form1 nur ausblenden
         }
     }
 
