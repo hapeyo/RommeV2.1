@@ -33,6 +33,7 @@
             this.dGVLastPartie = new System.Windows.Forms.DataGridView();
             this.btnOtherGame = new System.Windows.Forms.Button();
             this.cbBSpielnummer = new System.Windows.Forms.ComboBox();
+            this.btnRanking = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dGVLastPartie)).BeginInit();
             this.SuspendLayout();
             // 
@@ -89,11 +90,23 @@
             this.cbBSpielnummer.TabIndex = 5;
             this.cbBSpielnummer.SelectedIndexChanged += new System.EventHandler(this.cbBSpielnummer_SelectedIndexChanged);
             // 
+            // btnRanking
+            // 
+            this.btnRanking.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnRanking.Location = new System.Drawing.Point(628, 23);
+            this.btnRanking.Name = "btnRanking";
+            this.btnRanking.Size = new System.Drawing.Size(150, 35);
+            this.btnRanking.TabIndex = 6;
+            this.btnRanking.Text = "Ranking";
+            this.btnRanking.UseVisualStyleBackColor = true;
+            this.btnRanking.Click += new System.EventHandler(this.btnRanking_Click);
+            // 
             // PrintAnalyseForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.btnRanking);
             this.Controls.Add(this.cbBSpielnummer);
             this.Controls.Add(this.btnOtherGame);
             this.Controls.Add(this.dGVLastPartie);
@@ -114,5 +127,6 @@
         private System.Windows.Forms.DataGridView dGVLastPartie;
         private System.Windows.Forms.Button btnOtherGame;
         private System.Windows.Forms.ComboBox cbBSpielnummer;
+        private System.Windows.Forms.Button btnRanking;
     }
 }

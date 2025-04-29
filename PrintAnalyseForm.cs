@@ -16,30 +16,35 @@ using System.Diagnostics;
 
 namespace Romme_V2
 {
-   
+
     public partial class PrintAnalyseForm : Form
     {
         private NbrJug mainForm;
         private List<Spieler> spielerListe;
         private List<Spiel> spieleListe;
         private string spielZeile;
-        // Variable zum Nachverfolgen, ob die Auswahl programmgesteuert vorgenommen wurde
-        private bool programmaticSelection = false;
+       
+        private bool programmaticSelection = false; // Variable zum Nachverfolgen, ob die Auswahl programmgesteuert vorgenommen wurde
+        public string SpielCode { get; set; }
+        public string SpielerID { get; set; }
+        public int Punkte { get; set; }
+
+
         public PrintAnalyseForm(NbrJug form1)
         {
-        InitializeComponent();
-        mainForm = form1;
-        spielerListe = mainForm.GetSpielerListe();
-        spieleListe = LadeSpiele(NbrJug.dateiPfad);
-        this.Load += PrintAnalyseForm_Load; // OnLoad verknüpft
+            InitializeComponent();
+            mainForm = form1;
+            spielerListe = mainForm.GetSpielerListe();
+            spieleListe = LadeSpiele(NbrJug.dateiPfad);
+            this.Load += PrintAnalyseForm_Load; // OnLoad verknüpft
         }
 
         private void PrintAnalyseForm_Load(object sender, EventArgs e)
         {
-        string spieleDateiPfad = NbrJug.dateiPfad; // Pfad aus NbrJug holen
-        spieleListe = LadeSpiele(spieleDateiPfad); // Spiele laden
+            string spieleDateiPfad = NbrJug.dateiPfad; // Pfad aus NbrJug holen
+            spieleListe = LadeSpiele(spieleDateiPfad); // Spiele laden
 
-       
+
 
         }
         public List<Spiel> LadeSpiele(string dateiPfad)
@@ -61,12 +66,12 @@ namespace Romme_V2
                 })
                 .ToList();
         }
-        
+
         private void druckenBestimmtePartie()
         {
             // 1️⃣ Letzte Spielnummer bestimmen
-           // string spielZeile = spieleListe.Last().Spielnummer;
-           string spielPrefix = spielZeile.Substring(0, 8);
+            // string spielZeile = spieleListe.Last().Spielnummer;
+            string spielPrefix = spielZeile.Substring(0, 8);
 
             // 2️⃣ Nur Spieler aus dem letzten Spiel herausfiltern
             var aktuelleSpiele = spieleListe
@@ -102,7 +107,7 @@ namespace Romme_V2
             foreach (var spiel in spielGruppiert)
             {
                 DataRow row = dt.NewRow();
-                row["Spielnummer"] = spiel.Spielnummer.Substring(8,2);
+                row["Spielnummer"] = spiel.Spielnummer.Substring(8, 2);
 
                 foreach (var spieler in spielerListe.Where(spieler => teilnehmendeSpieler.Contains(spieler.ID)))
                 {
@@ -141,7 +146,7 @@ namespace Romme_V2
         {
             Document doc = new Document();
             string dateiNameRaw = spielZeile.Substring(0, 8);
-            string dateiName = $"Romme{dateiNameRaw}.pdf"; 
+            string dateiName = $"Romme{dateiNameRaw}.pdf";
             string pfad = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), dateiName);
 
             using (FileStream fs = new FileStream(pfad, FileMode.Create))
@@ -191,15 +196,15 @@ namespace Romme_V2
                     .Where(col => col.Name != "Spielnummer" && col.Name != "Gesamt")
                     .Select(col => col.Name)
                     .ToList();
-               
+
                 var spielerSummen = relevanteSpieler?
                      .Select(spitzname => new
                      {
-                        Spieler = spitzname,
-                        Summe = dGVLastPartie?.Rows?.Cast<DataGridViewRow>()
+                         Spieler = spitzname,
+                         Summe = dGVLastPartie?.Rows?.Cast<DataGridViewRow>()
                         .Where(row => row.Cells["Spielnummer"]?.Value?.ToString() != "Gesamt")
                         .Sum(row => Convert.ToInt32(row.Cells[spitzname]?.Value ?? 0))
-                     } 
+                     }
                      )
                 .OrderBy(spiel => spiel.Summe)
                 .ToList();
@@ -276,24 +281,24 @@ namespace Romme_V2
                 doc.Add(podiumTable);
                 doc.Close();
 
-               
+
             }
 
             MessageBox.Show($"PDF grabado en: {pfad}. Para imprimir usa un pdf Reader");
         }
-       
+
         private void btnBackToMain_Click(object sender, EventArgs e)
         {
             mainForm.Show(); // Form1 wieder sichtbar machen
             this.Hide(); // PrintAnalyseForm ausblenden
-            
+
         }
 
         private void btnLastGame_Click(object sender, EventArgs e)
         {
             //Letzte Spielnummer bestimmen
             spielZeile = spieleListe.Last().Spielnummer;
-           // string spielPrefix = spielZeile.Substring(0, 8);
+            // string spielPrefix = spielZeile.Substring(0, 8);
             druckenBestimmtePartie();
 
         }
@@ -313,22 +318,22 @@ namespace Romme_V2
             // ComboBox leeren und neu befüllen
             cbBSpielnummer.Items.Clear();
             cbBSpielnummer.Items.AddRange(spielPrefixe.ToArray());
-             
+
             // Erste Option auswählen (optional)
             if (cbBSpielnummer.Items.Count > 0)
             {
                 programmaticSelection = true; // Setzen Sie die Variable vor der Auswahl
                 cbBSpielnummer.SelectedIndex = 0;
                 programmaticSelection = false; // Setzen Sie die Variable nach der Auswahl zurück
-                }
-             
-        }
-/***********************+
-        private void btIPrintPdf_Click(object sender, EventArgs e)
-        {
+            }
 
         }
-********************/
+        /***********************+
+                private void btIPrintPdf_Click(object sender, EventArgs e)
+                {
+
+                }
+        ********************/
         private void cbBSpielnummer_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (!programmaticSelection && cbBSpielnummer.SelectedIndex != -1)
@@ -338,12 +343,227 @@ namespace Romme_V2
                 druckenBestimmtePartie();
             }
         }
+        public static List<SpielerStatistik> BerechneRanking(List<Spiel> spieleListe)
+        {
+            var spielerGruppiert = spieleListe.GroupBy(s => s.SpielerID);
+            List<SpielerStatistik> rankingListe = new List<SpielerStatistik>();
+
+            // Wörterbuch, um für jeden Spieler die Anzahl der gewonnenen Partien zu speichern
+            var gewonnenPartien = new Dictionary<string, int>();
+            var gewonnenSpielFaktoren = new Dictionary<string, double>();
+
+            // Gruppiere Spiele nach Partien
+            var partien = spieleListe.GroupBy(s => s.Spielnummer.Substring(0, 8));
+
+            foreach (var partie in partien)
+            {
+                int anzahlSpielerInPartie = partie.Select(s => s.SpielerID).Distinct().Count(); // Anzahl der Spieler in der Partie
+                double spielerAnzahlFaktor;
+                switch(anzahlSpielerInPartie)
+                {
+                    case 5:
+                        spielerAnzahlFaktor = 1.0;
+                        break;
+                    case 4:
+                        spielerAnzahlFaktor = 0.9;
+                        break;
+                    case 3:
+                        spielerAnzahlFaktor = 0.8;
+                        break;
+                    case 2:
+                        spielerAnzahlFaktor = 0.7;
+                        break;
+                    default:
+                        spielerAnzahlFaktor = 0.0; // Sicherheitswert für unbekannte Spieleranzahl
+                        break;
+                      
+                }
+
+                // Berechne die Gesamtpunktzahl jedes Spielers in der Partie
+                var punkteProSpieler = partie.GroupBy(sp => sp.SpielerID)
+                                             .Select(gr => new { SpielerID = gr.Key, Gesamtpunkte = gr.Sum(sp => sp.Punkte) });
+
+                // Bestimme die niedrigste Gesamtpunktzahl in der Partie
+                var niedrigstePunktzahl = punkteProSpieler.Min(p => p.Gesamtpunkte);
+
+                // Finde den Spieler mit der niedrigsten Punktzahl und zähle die Partie für ihn
+                foreach (var spieler in punkteProSpieler.Where(p => p.Gesamtpunkte == niedrigstePunktzahl))
+                {
+                    double gewinnFaktor = (double)1 / partie.Count() * spielerAnzahlFaktor; // Gewinnfaktor berechnen
+
+                    if (!gewonnenPartien.ContainsKey(spieler.SpielerID))
+                    {
+                        gewonnenPartien[spieler.SpielerID] = 0; // Initialisiere den Zähler
+                    }
+                    gewonnenPartien[spieler.SpielerID]++;
+
+                    if (!gewonnenSpielFaktoren.ContainsKey(spieler.SpielerID))
+                    {
+                        gewonnenSpielFaktoren[spieler.SpielerID] = 0.0; // Initialisiere den Gewinnfaktor
+                    }
+                    gewonnenSpielFaktoren[spieler.SpielerID] += gewinnFaktor; // Addiere den Gewinnfaktor für die Partie
+                }
+            }
+
+            // Durchschnittswerte berechnen
+            foreach (var spielerId in gewonnenSpielFaktoren.Keys.ToList())
+            {
+                gewonnenSpielFaktoren[spielerId] /= gewonnenPartien[spielerId]; // Durchschnitt berechnen
+            }
+
+            foreach (var spieler in spielerGruppiert)
+            {
+                var spiele = spieler.ToList();
+                int ap = spiele.Select(s => s.Spielnummer.Substring(0, 8)).Distinct().Count();  // Anzahl Partien
+                int ans = spiele.Count; // Anzahl Spiele
+                int gpz = spiele.Sum(s => s.Punkte); // Gesamtpunktzahl
+                string SpielerId = spieler.Key;
+                int gp = gewonnenPartien.ContainsKey(SpielerId) ? gewonnenPartien[SpielerId] : 0; // Anzahl der gewonnenen Partien übernehmen
+                int gs = spiele.Count(s => s.Punkte == 0); // Gewonnene Spiele
+
+                double gewinnSpielFaktor = gewonnenSpielFaktoren.ContainsKey(SpielerId) ? gewonnenSpielFaktoren[SpielerId] : 0.0; // Gewinnfaktor aus Spielen übernehmen
+               // MessageBox.Show($"Spieler {spieler.Key} hat einen Gewinnfaktor von {gewinnSpielFaktor}.");  
+                rankingListe.Add(new SpielerStatistik
+                {
+                    SpielerID = spieler.Key,
+                    Name = "Spieler " + spieler.Key,
+                    AP = ap,
+                    AS = ans,
+                    GP = gp,
+                    GS = gs,
+                    GPZ = gpz,
+                    GewinnSpielFaktor = gewinnSpielFaktor // Hinzufügen des Gewinnfaktors aus Spielen
+                });
+            }
+
+            MessageBox.Show("Ranking erfolgreich berechnet!");
+            return rankingListe.OrderBy(s => s.BerechneRanking()).ToList(); // Sortieren nach Ranking
+        }
+
+
+        public static void ErstelleRankingPDF(List<SpielerStatistik> rankingListe, List<Spieler> spielerListe, string pfad)
+        {
+            
+            Document document = new Document();
+            
+
+            PdfWriter.GetInstance(document, new FileStream(pfad, FileMode.Create));
+            document.Open();
+
+            PdfPTable table = new PdfPTable(6); // 6 Spalten
+            table.AddCell("Platz"); table.AddCell("Name"); table.AddCell("Ranking");
+            table.AddCell("Gew. Partien"); table.AddCell("Gew. Spiele"); table.AddCell("Ges. Punkte");
+
+            int platz = 1;
+            foreach (var spieler in rankingListe)
+            {
+                
+                table.AddCell(platz.ToString());
+                  
+                  string spielerID = spieler.Name.Split(' ').Last(); // Nimmt das letzte Element nach Leerzeichen
+                  var spielerObjekt = spielerListe.FirstOrDefault(s => s.ID == spielerID);
+                  if (spielerObjekt != null)
+                  {
+                      string spielerNachVorname = $"{spielerObjekt.Nachname}, {spielerObjekt.Vorname}";
+                      table.AddCell(spielerNachVorname);
+                  }
+                  else
+                  {
+                      table.AddCell("Unbekannter Spieler"); // Falls die ID nicht gefunden wird
+                  }
+                  
+               // MessageBox.Show($"Spielername: {spieler.Name}");
+               // table.AddCell(spieler.Name);
+                table.AddCell(spieler.BerechneRanking().ToString("0.00"));
+                table.AddCell($"{spieler.GP}:{spieler.AP}");
+                table.AddCell($"{spieler.GS}:{spieler.AS}");
+                table.AddCell(spieler.GPZ.ToString());
+                platz++;
+            }
+
+            document.Add(table);
+            document.Close();
+            MessageBox.Show("Pdf erstellen durchlaufen");
+        }
+
+        private void btnRanking_Click(object sender, EventArgs e)
+        {
+            List<SpielerStatistik> rankingListe = BerechneRanking(spieleListe);
+            string datum = DateTime.Now.ToString("yyMMdd");
+            string dateiName = $"RommeRanking{datum}.pdf";
+            string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            string filePath = Path.Combine(desktopPath, dateiName);
+
+            ErstelleRankingPDF(rankingListe, spielerListe, filePath);
+
+            // BerechneRanking(spieleListe);
+            // ErstelleRankingPDF(BerechneRanking(spieleListe), "Ranking.pdf");
+        }
+
+
+    }
+    public class Spiel
+    {
+        public string SpielerID { get; set; }
+        public string Spielnummer { get; set; }
+        public int Punkte { get; set; }
     }
 
-}
-public class Spiel
-{
-    public string SpielerID { get; set; }
-    public string Spielnummer { get; set; }
-    public int Punkte { get; set; }
+    public class SpielerStatistik
+    {
+        public string SpielerID { get; set; }
+        public string Name { get; set; }
+        public int AP { get; set; }  // Anzahl Partien
+        public int AS { get; set; }  // Anzahl Spiele
+        public int GP { get; set; }  // Gewonnene Partien (kleinste Summe)
+        public int GS { get; set; }  // Gewonnene Spiele (0 Punkte)
+        public int GPZ { get; set; } // Gesamtpunktezahl
+        public double GewinnSpielFaktor { get; set; } // Gewinnfaktor aus gewonnenen Spielen
+
+
+        // Methode zur Berechnung der durchschnittlichen Punkte pro Spiel
+        private double BerechneGPZProSpiel()
+        {
+            double result = (double)GPZ / AS;
+      //     MessageBox.Show($"GPZ: {GPZ}, AS: {AS}, GPZ pro Spiel: {result}", "Prüfausgabe - GPZProSpiel");
+            return result;
+        }
+
+        // Methode zur Berechnung des Gewinnfaktors
+        private double BerechneGewinnFaktor()
+        {
+            //double result = (double)(GP / AP + GS / AS) / 2;
+            double result = (GP / (double)AP + (double)GewinnSpielFaktor) / 2;
+         //   MessageBox.Show($"GP: {GP}, AP: {AP}, GS: {GS}, AS: {AS}, Gewinnfaktor: {result}", "Prüfausgabe - GewinnFaktor");
+            return result;
+        }
+
+        // Methode zur Berechnung des Rankings
+        public double BerechneRanking()
+        {
+            var gpzProSpiel = BerechneGPZProSpiel();
+            var gewinnFaktor = BerechneGewinnFaktor();
+            double result = gpzProSpiel - (gpzProSpiel * gewinnFaktor);
+           // MessageBox.Show($"GPZ pro Spiel: {gpzProSpiel}, Gewinnfaktor: {gewinnFaktor}, Ranking: {result}", "Prüfausgabe - Ranking");
+            return result;
+        }
+    }
+
+    /*****************
+    public class SpielerStatistik
+    {
+        public string SpielerID { get; set; }
+        public string Name { get; set; }
+        public int AP { get; set; }  // Anzahl Partien
+        public int AS { get; set; }  // Anzahl Spiele
+        public int GP { get; set; }  // Gewonnene Partien (kleinste Summe)
+        public int GS { get; set; }  // Gewonnene Spiele (0 Punkte)
+        public int GPZ { get; set; } // Gesamtpunktezahl
+
+        public double BerechneRanking()
+        {
+            return (double)GPZ / AS - ((double)GPZ / AS - (double)(GP / AP + GS / AS) / 2);
+        }
+    }
+    **************/
 }
