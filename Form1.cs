@@ -29,12 +29,17 @@ namespace Romme_V2
         private List<(string spielNummerFinal, string spielerID, int [] punkteProSpiel)> spielPunkte = new List<(string, string, int[])>();// Liste von Tupeln, die die Spielnummer, ID des Spielers und Punkte enthalten
         private System.Windows.Forms.Label[] players;
 
-        public NbrJug()
+        public NbrJug(bool isAdminMode = false)
         {
             InitializeComponent();
             LadeSpieler();
             InitializePlayers();
-
+            if (isAdminMode)
+            {
+                ApplyAdminMode();
+            }
+            //btnSavePoints.Click += clcBtn_Click;
+               
 
         }
         private void InitializePlayers()
@@ -49,40 +54,71 @@ namespace Romme_V2
 
 
        
-        public string GeneriereSpielNummer() //Generiert einen eindeutigen Spielnamen
+        public string GeneriereSpielNummer(string spielNummerOldGame = null) //Generiert einen eindeutigen Spielnamen
         {
-            if (DateTime.Today != aktuellesDatum)
+            if (spielNummerOldGame == null)
             {
-                aktuellesDatum = DateTime.Today;
-                partieZaehler = 1; // Zurücksetzen des Partiezählers für den neuen Tag
+                if (DateTime.Today != aktuellesDatum)
+                {
+                    aktuellesDatum = DateTime.Today;
+                    partieZaehler = 1; // Zurücksetzen des Partiezählers für den neuen Tag
+                }
+                spielNummerOldGame = aktuellesDatum.ToString("yyMMdd"); // Spielnummer für den aktuellen Tag
             }
-            string spielNummerFinal = $"{aktuellesDatum:yyMMdd}{partieZaehler:D2}{spielNummer:D2}";
+            string spielNummerFinal = $"{spielNummerOldGame}{partieZaehler:D2}{spielNummer:D2}";
             return spielNummerFinal;
         }
-        
-       
-        private void PartieZaehler() // Zählt die Anzahl der Partien, die an einem Tag gespielt wurden und regelt den Partiezähler
+        private void PartieZaehler(string spielNummerOldGame = null)
         {
+            string datumAktuell = spielNummerOldGame ?? DateTime.Now.ToString("yyMMdd"); // Falls kein Datum übergeben wird, verwende das aktuelle Datum
+            partieZaehler = 1; // Standardwert für den ersten Eintrag
+
             if (File.Exists(dateiPfad))
             {
                 string[] zeilen = File.ReadAllLines(dateiPfad);
+                int maxPartiezaehler = 0;
                 if (zeilen.Length > 0) //Beim ersten Start der app ist die Datei Spiele noch leer
                 {
-                    string letzteZeile = zeilen[zeilen.Length - 1];
-                    string spielnummerID = letzteZeile.Split(',')[0];
-                    string datumTeil = spielnummerID.Substring(0, 6);
-                    string partiezaehlerTeil = spielnummerID.Substring(6, 2);
-                    int result = Convert.ToInt32(partiezaehlerTeil);
-                    string datumAktuell = DateTime.Now.ToString("yyMMdd");
-
-                    if (datumTeil == datumAktuell)
+                    foreach (string zeile in zeilen)
                     {
-                        partieZaehler = result + 1;
+                        string spielnummerID = zeile.Split(',')[0]; // Extrahiere die Spielnummer
+                        if (spielnummerID.StartsWith(datumAktuell)) // Vergleiche die ersten sechs Zeichen (Datum)
+                        {
+                            string partiezaehlerTeil = spielnummerID.Substring(6, 2);
+                            int aktuellerZaehler = Convert.ToInt32(partiezaehlerTeil);
+                            maxPartiezaehler = Math.Max(maxPartiezaehler, aktuellerZaehler);
+                        }
                     }
+
+                    partieZaehler = maxPartiezaehler + 1; // Erhöhe den höchsten gefundenen Zähler um eins
                 }
             }
         }
-          
+        /*********************************
+         private void PartieZaehler(string spielNummerOldGame = null) // Zählt die Anzahl der Partien, die an einem Tag gespielt wurden und regelt den Partiezähler
+         {
+             string datumAktuell = spielNummerOldGame ?? DateTime.Now.ToString("yyMMdd"); // Falls kein Datum übergeben wird, verwende das aktuelle Datum
+
+             if (File.Exists(dateiPfad))
+             {
+                 string[] zeilen = File.ReadAllLines(dateiPfad);
+                 if (zeilen.Length > 0) //Beim ersten Start der app ist die Datei Spiele noch leer
+                 {
+                     string letzteZeile = zeilen[zeilen.Length - 1];
+                     string spielnummerID = letzteZeile.Split(',')[0];
+                     string datumTeil = spielnummerID.Substring(0, 6);
+                     string partiezaehlerTeil = spielnummerID.Substring(6, 2);
+                     int result = Convert.ToInt32(partiezaehlerTeil);
+                     //string datumAktuell = DateTime.Now.ToString("yyMMdd");
+
+                     if (datumTeil == datumAktuell)
+                     {
+                         partieZaehler = result + 1;
+                     }
+                 }
+             }
+         }
+          ***********/
         // Speichert Spielinformationen in der CSV-Datei
         private void SpielSpeichern(string dateiPfad)
         {
@@ -98,11 +134,7 @@ namespace Romme_V2
                         for (int i = 0; i < spiel.punkteProSpiel.Length; i++)
                         {
                             // Format: Spielnummer, SpielerID, Punkte des Spielers
-                            //writer.WriteLine($"{spiel.spielNummerFinal}, {spiel.spielerID}, {spiel.punkteProSpiel[i]}");
-                           // writer.WriteLine($"{spiel.spielNummerFinal}, {spiel.spielerID.Trim()}, {spiel.punkteProSpiel[i]}");
                             writer.WriteLine($"{spiel.spielNummerFinal},{spiel.spielerID.Trim()},{spiel.punkteProSpiel[i]}");
-
-
                         }
                     }
                 }
@@ -126,7 +158,23 @@ namespace Romme_V2
         //Null gesetzt.Ausserdem wird der Punkt fürs Kartenausteilen weitergesetzt
         private void clcBtn_Click(object sender, EventArgs e)
         {
-            string spielNummerFinal = GeneriereSpielNummer();
+            string spielNummerOldGame = btnSavePoints.Tag as string; // Spielnummer aus Tag holen
+            string spielNummerFinal; 
+            // Prüfen, ob ein altes Spiel behandelt wird
+            if (!string.IsNullOrEmpty(spielNummerOldGame))
+            {
+                spielNummerFinal = GeneriereSpielNummer(spielNummerOldGame); // Altes Spiel nutzen
+            }
+            else
+            {
+                spielNummerFinal = GeneriereSpielNummer(); // Aktuelles Datum nutzen
+            }
+
+            MessageBox.Show($"Generierte Spielnummer: {spielNummerFinal}", "SpielNummer");
+        
+
+
+
             string[] pointsFields = { pointsPl1.Text, pointsPl2.Text, pointsPl3.Text, pointsPl4.Text, pointsPl5.Text };
             string[] sumFields = { sumPl1.Text, sumPl2.Text, sumPl3.Text, sumPl4.Text, sumPl5.Text };
             string[] spielerIDs = {
@@ -244,11 +292,26 @@ namespace Romme_V2
             System.Windows.Forms.Label[] players = { player1, player2, player3, player4, player5 };
             System.Windows.Forms.TextBox[] pointsFields = { pointsPl1, pointsPl2, pointsPl3, pointsPl4, pointsPl5 };
             System.Windows.Forms.Label[] sumFields = { sumPl1, sumPl2, sumPl3, sumPl4, sumPl5 };
+            string spielNummerOldGame = btnSavePoints.Tag as string; // Spielnummer aus Tag holen
+
             ++spielNummer;
             gameCtr.Text = spielNummer.ToString();
             CerrarApp.Enabled = false;
-            PartieZaehler();
+            //PartieZaehler();
             
+            // Prüfen, ob ein altes Spiel behandelt wird
+            if (!string.IsNullOrEmpty(spielNummerOldGame))
+            {
+                PartieZaehler(spielNummerOldGame); // Altes Spiel nutzen
+            }
+            else
+            {
+                PartieZaehler(); // Aktuelles Datum nutzen
+            }
+
+            MessageBox.Show($"Generierte Nummer: {partieZaehler}", "PartieZaheler");
+            
+
             if (numPlayer <= 1)
             {
                 MessageBox.Show("Por favor añade por lo menos dos jugadores antes de start.");
@@ -378,12 +441,12 @@ namespace Romme_V2
         private void txtSpielerName_TextChanged(object sender, EventArgs e)
         {
             string eingabe = txtNewPl.Text;
-
+            CerrarApp.Enabled = false;
             // Spieler filtern
             var gefilterteSpieler = spielerListe
                 .Where(s => s.Vorname.StartsWith(eingabe, StringComparison.OrdinalIgnoreCase))
                 .ToList();
-            CerrarApp.Enabled = false;
+            
             // Liste aktualisieren
             lstPlayer.Items.Clear();
             foreach (var spieler in gefilterteSpieler)
@@ -405,15 +468,6 @@ namespace Romme_V2
         }
         private void lstPlayer_SelectedIndexChanged(object sender, EventArgs e)
         {
-
-            
-/***********************************
-            if (spielerListe == null || !spielerListe.Any())
-            {
-                MessageBox.Show("Die Spieler-Liste ist leer oder null!");
-                return;
-            }
-*******************/
             // Prüfen, ob ein Eintrag ausgewählt ist
             if (lstPlayer.SelectedItem != null)
             {
@@ -421,27 +475,18 @@ namespace Romme_V2
                 var selectedSpieler = spielerListe.FirstOrDefault(s =>
                     $"{s.Vorname} {s.Nachname}" == lstPlayer.SelectedItem.ToString());
                 
-                /*******************************
-                if (selectedSpieler == null)
-                {
-                    MessageBox.Show("Kein passender Spieler für das ausgewählte Element gefunden.");
-                    return;
-                }
-               ***************************/
-
-
-
-                //string spielerID = spielerListe.FirstOrDefault(s => s.Spitzname == selectedSpieler.Spitzname)?.ID;
-                
-                //    MessageBox.Show(spielerID ?? "Keine Id für Spitznamen gefunden");
-               
-                
-                
-                
-                // Spitznamen im Label anzeigen
+                 // Spitznamen im Label anzeigen
                 if (selectedSpieler != null)
                 {
                     Label[] playerLabels = { player1, player2, player3, player4, player5 };
+                    // Fehlerbehandlung: Überprüfen, ob der Spieler bereits ausgewählt wurde
+                    if (ErrorHandling.IsPlayerAlreadySelected(playerLabels, selectedSpieler.ID))
+                    {
+                        ErrorHandling.ShowPlayerAlreadySelectedError();
+                        return; // Methode verlassen, da Spieler bereits ausgewählt wurde
+                    }
+
+
 
                     foreach (var label in playerLabels)
                     {
@@ -566,10 +611,170 @@ namespace Romme_V2
         private void btnAdmin_Click(object sender, EventArgs e)
         {
             AdminForm adminForm = new AdminForm(this); // Hauptform übergeben
-            adminForm.Show(); // PrintAnalyseForm anzeigen
+            adminForm.Show(); // AdminForm anzeigen
             this.Hide(); // Form1 nur ausblenden
         }
+
+        private void ToggleEingabeModus()
+        {
+            // Liste aller betroffenen Elemente mit ihren "Enabled"- und "Visible"-Eigenschaften
+            Control[] elements = { strtJuego, showPlaylist, StopBtn, btnPrintAnalyse, CerrarApp, ClcBtn, 
+                           btnStrtOldGame, btnSaveOldGame, btnSavePoints, btnAdmin, lblSoloOldGames, dTPOldGameDate };
+
+            foreach (var element in elements)
+            {
+                element.Enabled = !element.Enabled;  // Invertiere "Enabled"
+                element.Visible = !element.Visible;  // Invertiere "Visible"
+            }
+        }
+        
+        private void ApplyAdminMode()
+        {
+            //Eingabe umbauen
+            strtJuego.Enabled = false; // Deaktivieren Sie den Button    
+            strtJuego.Visible = false; // Verstecken Sie den Button
+            showPlaylist.Enabled = false; // Deaktivieren Sie den Button    
+            showPlaylist.Visible = false; // Verstecken Sie den Button
+            StopBtn.Enabled = false; // Deaktivieren Sie den Button
+            StopBtn.Visible = false; // Verstecken Sie den Button
+            btnPrintAnalyse.Enabled = false; // Deaktivieren Sie den Button
+            btnPrintAnalyse.Visible = false; // Verstecken Sie den Button
+            CerrarApp.Enabled = false; // Deaktivieren Sie den Button
+            CerrarApp.Visible = false; // Verstecken Sie den Button
+            ClcBtn.Enabled = false; // Deaktivieren Sie den Button
+            ClcBtn.Visible = false; // Verstecken Sie den Button
+            btnAdmin.Enabled = false; // Deaktivieren Sie den Button
+            btnAdmin.Visible = false; // Verstecken Sie den Button
+                                    // txtNewPl.Enabled = false; // Deaktivieren Sie die Textbox
+            btnStrtOldGame.Enabled = true; // aktivieren Sie den Button
+            btnStrtOldGame.Visible = true; // zeigen Sie den Button an
+            btnSaveOldGame.Enabled = true; // aktivieren Sie den Button
+            btnSaveOldGame.Visible = true; // zeigen Sie den Button an
+            btnSavePoints.Enabled = true; // aktivieren Sie den Button  
+            btnSavePoints.Visible = true; // zeigen Sie den Button an
+            lblSoloOldGames.Visible = true; // zeigen Sie das Label an
+            dTPOldGameDate.Visible = true; // zeigen Sie das Label an
+            dTPOldGameDate.Enabled = true; // aktivieren Sie das Label
+           
+            
+            // string eingabeDatum = PromptUserForInput("Datum für alte Spiele eingeben (yyMMdd):", DateTime.Now.ToString("yyMMdd"));
+            //PartieZaehler(eingabeDatum);
+
+
+        }
+        /**********************************
+        private void ApplyMainMode()
+        {
+            //Eingabe umbauen
+            strtJuego.Enabled = false;     
+            strtJuego.Visible = false; 
+            showPlaylist.Enabled = false;     
+            showPlaylist.Visible = false; 
+            StopBtn.Enabled = false; 
+            StopBtn.Visible = false; 
+            btnPrintAnalyse.Enabled = false; 
+            btnPrintAnalyse.Visible = false; 
+            CerrarApp.Enabled = false; 
+            CerrarApp.Visible = false; 
+            ClcBtn.Enabled = false; 
+            ClcBtn.Visible = false; // Verstecken Sie den Button
+            txtNewPl.Enabled = false; // Deaktivieren Sie die Textbox
+            btnStrtOldGame.Enabled = true; // aktivieren Sie den Button
+            btnStrtOldGame.Visible = true; // zeigen Sie den Button an
+            btnSaveOldGame.Enabled = true; // aktivieren Sie den Button
+            btnSaveOldGame.Visible = true; // zeigen Sie den Button an
+            btnSavePoints.Enabled = true; // aktivieren Sie den Button  
+            btnSavePoints.Visible = true; // zeigen Sie den Button an
+            lblSoloOldGames.Visible = true; // zeigen Sie das Label an
+            dTPOldGameDate.Visible = true; // zeigen Sie das Label an
+            dTPOldGameDate.Enabled = true; // aktivieren Sie das Label
+
+
+            // string eingabeDatum = PromptUserForInput("Datum für alte Spiele eingeben (yyMMdd):", DateTime.Now.ToString("yyMMdd"));
+            //PartieZaehler(eingabeDatum);
+
+
+        }
+        ******************/
+        private void dTPOldGameDate_ValueChanged(object sender, EventArgs e)
+        {
+           // string formattedDate = dTPOldGameDate.Value.ToString("yyMMdd");
+           // PartieZaehler(formattedDate);
+            string spielNummerOldGame = dTPOldGameDate.Value.ToString("yyMMdd"); //$"{formattedDate}";
+            btnSavePoints.Tag = spielNummerOldGame;
+            // Jetzt übergeben wir spielNummerOldGame an die Methode
+            string spielNummerFinal = GeneriereSpielNummer(spielNummerOldGame);
+
+            MessageBox.Show($"Spielnummer: {spielNummerOldGame}", "Spielnummer");
+
+            txtNewPl.Enabled = true;
+            
+        }
+
+        private void dTPOldGameDate_CloseUp(object sender, EventArgs e)
+        {
+            string spielNummerOldGame = dTPOldGameDate.Value.ToString("yyMMdd"); //$"{formattedDate}";
+            btnSavePoints.Tag = spielNummerOldGame;
+            // Jetzt übergeben wir spielNummerOldGame an die Methode
+            string spielNummerFinal = GeneriereSpielNummer(spielNummerOldGame);
+
+            MessageBox.Show($"Spielnummer: {spielNummerOldGame}", "Spielnummer");
+
+            txtNewPl.Enabled = true;
+        }
+
+        private void btnSaveOldGame_Click(object sender, EventArgs e)
+        {
+            StopBtn_Click(sender, e); // Bestehende Methode aufrufen
+            btnPrintAnalyse.Enabled = false;
+            ToggleEingabeModus();
+            AdminForm adminForm = new AdminForm(this); // Hauptform übergeben
+            adminForm.Show(); // AdminForm anzeigen
+            this.Hide(); // Form1 nur ausblenden
+        }
+
+        /*****************************+   false
+       private void btnStrtOldGame_Click(object sender, EventArgs e)
+       {
+
+           System.Windows.Forms.Label[] players = { player1, player2, player3, player4, player5 };
+           System.Windows.Forms.TextBox[] pointsFields = { pointsPl1, pointsPl2, pointsPl3, pointsPl4, pointsPl5 };
+           System.Windows.Forms.Label[] sumFields = { sumPl1, sumPl2, sumPl3, sumPl4, sumPl5 };
+           ++spielNummer;
+           gameCtr.Text = spielNummer.ToString();
+           CerrarApp.Enabled = false;
+           //PartieZaehler();
+
+           if (numPlayer <= 1)
+           {
+               MessageBox.Show("Por favor añade por lo menos dos jugadores antes de start.");
+               return;
+           }
+
+           txtNewPl.Enabled = false;
+           btnPrintAnalyse.Enabled = false;
+           pointsPl1.Enabled = true;
+           pointsPl2.Enabled = true;
+           pointsPl3.Enabled = true;
+           pointsPl4.Enabled = true;
+           pointsPl5.Enabled = true;
+
+           ResetPointsFieldsText(pointsFields);
+
+           for (int j = players.Length - 1; j >= numPlayer; j--)
+           {
+               players[j].ForeColor = this.BackColor;
+               pointsFields[j].Enabled = false;
+               sumFields[j].ForeColor = this.BackColor;
+           }
+           strtJuego.Enabled = false;
+           cckBaraje1.Checked = true;
+
+       }
+
+       *****************************/
     }
+
 
     // Spieler-Klasse
     public class Spieler
@@ -681,5 +886,25 @@ namespace Romme_V2
             return true; // Alle Prüfungen erfolgreich
             
         }
+        public static bool IsPlayerAlreadySelected(Label[] labels, string playerId)
+        {
+            // Überprüfen, ob die Spieler-ID bereits in einem Label-Tag vorhanden ist
+            foreach (var label in labels)
+            {
+                if (label.Tag != null && label.Tag.ToString() == playerId)
+                {
+                    return true; // Spieler ist bereits ausgewählt
+                }
+            }
+            return false; // Spieler ist noch nicht ausgewählt
+        }
+
+        public static void ShowPlayerAlreadySelectedError()
+        {
+            MessageBox.Show("Spieler ist schon ausgewählt!", "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+
+
+
     }
 }

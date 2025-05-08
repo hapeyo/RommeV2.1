@@ -31,6 +31,7 @@
             this.btnRegresar = new System.Windows.Forms.Button();
             this.cbBPlayerList = new System.Windows.Forms.ComboBox();
             this.btnUpdatePlayer = new System.Windows.Forms.Button();
+            this.btnOldGame = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnRegresar
@@ -64,11 +65,23 @@
             this.btnUpdatePlayer.UseVisualStyleBackColor = true;
             this.btnUpdatePlayer.Click += new System.EventHandler(this.btnUpdatePlayer_Click);
             // 
+            // btnOldGame
+            // 
+            this.btnOldGame.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnOldGame.Location = new System.Drawing.Point(270, 13);
+            this.btnOldGame.Name = "btnOldGame";
+            this.btnOldGame.Size = new System.Drawing.Size(200, 40);
+            this.btnOldGame.TabIndex = 3;
+            this.btnOldGame.Text = "Agregar Partido";
+            this.btnOldGame.UseVisualStyleBackColor = true;
+            this.btnOldGame.Click += new System.EventHandler(this.btnOldGame_Click);
+            // 
             // AdminForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.btnOldGame);
             this.Controls.Add(this.btnUpdatePlayer);
             this.Controls.Add(this.cbBPlayerList);
             this.Controls.Add(this.btnRegresar);
@@ -83,5 +96,6 @@
         private System.Windows.Forms.Button btnRegresar;
         private System.Windows.Forms.ComboBox cbBPlayerList;
         private System.Windows.Forms.Button btnUpdatePlayer;
+        private System.Windows.Forms.Button btnOldGame;
     }
 }

@@ -63,6 +63,11 @@
             this.lblDate = new System.Windows.Forms.Label();
             this.btnPrintAnalyse = new System.Windows.Forms.Button();
             this.btnAdmin = new System.Windows.Forms.Button();
+            this.btnStrtOldGame = new System.Windows.Forms.Button();
+            this.btnSavePoints = new System.Windows.Forms.Button();
+            this.btnSaveOldGame = new System.Windows.Forms.Button();
+            this.lblSoloOldGames = new System.Windows.Forms.Label();
+            this.dTPOldGameDate = new System.Windows.Forms.DateTimePicker();
             this.SuspendLayout();
             // 
             // player1
@@ -393,7 +398,7 @@
             this.lstPlayer.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lstPlayer.FormattingEnabled = true;
             this.lstPlayer.ItemHeight = 25;
-            this.lstPlayer.Location = new System.Drawing.Point(816, 157);
+            this.lstPlayer.Location = new System.Drawing.Point(816, 149);
             this.lstPlayer.Name = "lstPlayer";
             this.lstPlayer.Size = new System.Drawing.Size(140, 79);
             this.lstPlayer.TabIndex = 33;
@@ -423,7 +428,7 @@
             // btnPrintAnalyse
             // 
             this.btnPrintAnalyse.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnPrintAnalyse.Location = new System.Drawing.Point(455, 246);
+            this.btnPrintAnalyse.Location = new System.Drawing.Point(455, 400);
             this.btnPrintAnalyse.Name = "btnPrintAnalyse";
             this.btnPrintAnalyse.Size = new System.Drawing.Size(200, 80);
             this.btnPrintAnalyse.TabIndex = 36;
@@ -434,7 +439,7 @@
             // btnAdmin
             // 
             this.btnAdmin.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnAdmin.Location = new System.Drawing.Point(455, 343);
+            this.btnAdmin.Location = new System.Drawing.Point(455, 486);
             this.btnAdmin.Name = "btnAdmin";
             this.btnAdmin.Size = new System.Drawing.Size(200, 46);
             this.btnAdmin.TabIndex = 37;
@@ -442,12 +447,79 @@
             this.btnAdmin.UseVisualStyleBackColor = true;
             this.btnAdmin.Click += new System.EventHandler(this.btnAdmin_Click);
             // 
+            // btnStrtOldGame
+            // 
+            this.btnStrtOldGame.Enabled = false;
+            this.btnStrtOldGame.Location = new System.Drawing.Point(455, 159);
+            this.btnStrtOldGame.Name = "btnStrtOldGame";
+            this.btnStrtOldGame.Size = new System.Drawing.Size(200, 40);
+            this.btnStrtOldGame.TabIndex = 38;
+            this.btnStrtOldGame.Text = "Start";
+            this.btnStrtOldGame.UseVisualStyleBackColor = true;
+            this.btnStrtOldGame.Visible = false;
+            this.btnStrtOldGame.Click += new System.EventHandler(this.strtJuego_Click);
+            // 
+            // btnSavePoints
+            // 
+            this.btnSavePoints.Enabled = false;
+            this.btnSavePoints.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnSavePoints.Location = new System.Drawing.Point(249, 373);
+            this.btnSavePoints.Name = "btnSavePoints";
+            this.btnSavePoints.Size = new System.Drawing.Size(200, 40);
+            this.btnSavePoints.TabIndex = 39;
+            this.btnSavePoints.Text = "Save Points";
+            this.btnSavePoints.UseVisualStyleBackColor = true;
+            this.btnSavePoints.Visible = false;
+            this.btnSavePoints.Click += new System.EventHandler(this.clcBtn_Click);
+            // 
+            // btnSaveOldGame
+            // 
+            this.btnSaveOldGame.Enabled = false;
+            this.btnSaveOldGame.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnSaveOldGame.Location = new System.Drawing.Point(455, 224);
+            this.btnSaveOldGame.Name = "btnSaveOldGame";
+            this.btnSaveOldGame.Size = new System.Drawing.Size(200, 40);
+            this.btnSaveOldGame.TabIndex = 40;
+            this.btnSaveOldGame.Text = "GrabarPartido";
+            this.btnSaveOldGame.UseVisualStyleBackColor = true;
+            this.btnSaveOldGame.Visible = false;
+            this.btnSaveOldGame.Click += new System.EventHandler(this.btnSaveOldGame_Click);
+            // 
+            // lblSoloOldGames
+            // 
+            this.lblSoloOldGames.AutoSize = true;
+            this.lblSoloOldGames.Enabled = false;
+            this.lblSoloOldGames.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblSoloOldGames.Location = new System.Drawing.Point(0, 45);
+            this.lblSoloOldGames.Name = "lblSoloOldGames";
+            this.lblSoloOldGames.Size = new System.Drawing.Size(792, 25);
+            this.lblSoloOldGames.TabIndex = 41;
+            this.lblSoloOldGames.Text = "Este ventana es exclusivo para documentar partidos anteriores. Fecha, por favor:";
+            this.lblSoloOldGames.Visible = false;
+            // 
+            // dTPOldGameDate
+            // 
+            this.dTPOldGameDate.Enabled = false;
+            this.dTPOldGameDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.dTPOldGameDate.Format = System.Windows.Forms.DateTimePickerFormat.Short;
+            this.dTPOldGameDate.Location = new System.Drawing.Point(455, 109);
+            this.dTPOldGameDate.Name = "dTPOldGameDate";
+            this.dTPOldGameDate.Size = new System.Drawing.Size(200, 30);
+            this.dTPOldGameDate.TabIndex = 43;
+            this.dTPOldGameDate.Visible = false;
+            this.dTPOldGameDate.CloseUp += new System.EventHandler(this.dTPOldGameDate_CloseUp);
+            // 
             // NbrJug
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(17F, 32F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlLight;
             this.ClientSize = new System.Drawing.Size(978, 544);
+            this.Controls.Add(this.dTPOldGameDate);
+            this.Controls.Add(this.lblSoloOldGames);
+            this.Controls.Add(this.btnSaveOldGame);
+            this.Controls.Add(this.btnSavePoints);
+            this.Controls.Add(this.btnStrtOldGame);
             this.Controls.Add(this.btnAdmin);
             this.Controls.Add(this.btnPrintAnalyse);
             this.Controls.Add(this.lblDate);
@@ -530,6 +602,11 @@
         private System.Windows.Forms.Label lblDate;
         private System.Windows.Forms.Button btnPrintAnalyse;
         private System.Windows.Forms.Button btnAdmin;
+        private System.Windows.Forms.Button btnStrtOldGame;
+        private System.Windows.Forms.Button btnSavePoints;
+        private System.Windows.Forms.Button btnSaveOldGame;
+        private System.Windows.Forms.Label lblSoloOldGames;
+        private System.Windows.Forms.DateTimePicker dTPOldGameDate;
     }
 }
 

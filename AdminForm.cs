@@ -26,11 +26,6 @@ namespace Romme_V2
            this.Load += AdminForm_Load; // OnLoad verknüpft
         }
 
-        private void btnRegresar_Click(object sender, EventArgs e)
-        {
-            mainForm.Show(); // Form1 wieder sichtbar machen
-            this.Hide(); // AdminForm ausblenden
-        }
         
         public List<Spiel> LadeSpiele(string dateiPfad)
         {
@@ -162,6 +157,21 @@ namespace Romme_V2
         private void btnUpdatePlayer_Click(object sender, EventArgs e)
         {
             SpielerVorZuName();
+        }
+
+        private void btnOldGame_Click(object sender, EventArgs e)
+        {
+            
+            NbrJug mainForm = new NbrJug(true); // true steht für AdminMode
+            mainForm.Show();
+            this.Hide();
+
+        }
+
+        private void btnRegresar_Click(object sender, EventArgs e)
+        {
+            mainForm.Show(); // Form1 wieder sichtbar machen
+            this.Hide(); // AdminForm ausblenden
         }
     }
 }

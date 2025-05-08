@@ -436,7 +436,7 @@ namespace Romme_V2
                 });
             }
 
-            MessageBox.Show("Ranking erfolgreich berechnet!");
+           // MessageBox.Show("Ranking erfolgreich berechnet!");
             return rankingListe.OrderBy(s => s.BerechneRanking()).ToList(); // Sortieren nach Ranking
         }
 
@@ -483,7 +483,7 @@ namespace Romme_V2
 
             document.Add(table);
             document.Close();
-            MessageBox.Show("Pdf erstellen durchlaufen");
+            
         }
 
         private void btnRanking_Click(object sender, EventArgs e)
@@ -496,8 +496,8 @@ namespace Romme_V2
 
             ErstelleRankingPDF(rankingListe, spielerListe, filePath);
 
-            // BerechneRanking(spieleListe);
-            // ErstelleRankingPDF(BerechneRanking(spieleListe), "Ranking.pdf");
+            MessageBox.Show($"Para imprimir abrir documento {dateiName} en desktop");
+
         }
 
 
