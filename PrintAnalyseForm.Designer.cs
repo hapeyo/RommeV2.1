@@ -55,7 +55,7 @@
             this.btnLastGame.Name = "btnLastGame";
             this.btnLastGame.Size = new System.Drawing.Size(300, 35);
             this.btnLastGame.TabIndex = 1;
-            this.btnLastGame.Text = "Mostrar ultimo partido";
+            this.btnLastGame.Text = "Inprimir ultimo partido";
             this.btnLastGame.UseVisualStyleBackColor = true;
             this.btnLastGame.Click += new System.EventHandler(this.btnLastGame_Click);
             // 

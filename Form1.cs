@@ -38,7 +38,7 @@ namespace Romme_V2
             {
                 ApplyAdminMode();
             }
-            //btnSavePoints.Click += clcBtn_Click;
+           
                
 
         }
@@ -94,31 +94,7 @@ namespace Romme_V2
                 }
             }
         }
-        /*********************************
-         private void PartieZaehler(string spielNummerOldGame = null) // Zählt die Anzahl der Partien, die an einem Tag gespielt wurden und regelt den Partiezähler
-         {
-             string datumAktuell = spielNummerOldGame ?? DateTime.Now.ToString("yyMMdd"); // Falls kein Datum übergeben wird, verwende das aktuelle Datum
-
-             if (File.Exists(dateiPfad))
-             {
-                 string[] zeilen = File.ReadAllLines(dateiPfad);
-                 if (zeilen.Length > 0) //Beim ersten Start der app ist die Datei Spiele noch leer
-                 {
-                     string letzteZeile = zeilen[zeilen.Length - 1];
-                     string spielnummerID = letzteZeile.Split(',')[0];
-                     string datumTeil = spielnummerID.Substring(0, 6);
-                     string partiezaehlerTeil = spielnummerID.Substring(6, 2);
-                     int result = Convert.ToInt32(partiezaehlerTeil);
-                     //string datumAktuell = DateTime.Now.ToString("yyMMdd");
-
-                     if (datumTeil == datumAktuell)
-                     {
-                         partieZaehler = result + 1;
-                     }
-                 }
-             }
-         }
-          ***********/
+        
         // Speichert Spielinformationen in der CSV-Datei
         private void SpielSpeichern(string dateiPfad)
         {
@@ -183,10 +159,9 @@ namespace Romme_V2
                                     player3?.Tag != null ? player3.Tag.ToString() : string.Empty,
                                     player4?.Tag != null ? player4.Tag.ToString() : string.Empty,
                                     player5?.Tag != null ? player5.Tag.ToString() : string.Empty
-};
+            };
 
-            //string alleSpielerIDs = $"{spielerIDs[0]}, {spielerIDs[1]}, {spielerIDs[2]}";
-            
+                        
             
             
             if (!ErrorHandling.FehlerbehandlungPunkte(pointsFields, numPlayer))
@@ -662,40 +637,7 @@ namespace Romme_V2
 
 
         }
-        /**********************************
-        private void ApplyMainMode()
-        {
-            //Eingabe umbauen
-            strtJuego.Enabled = false;     
-            strtJuego.Visible = false; 
-            showPlaylist.Enabled = false;     
-            showPlaylist.Visible = false; 
-            StopBtn.Enabled = false; 
-            StopBtn.Visible = false; 
-            btnPrintAnalyse.Enabled = false; 
-            btnPrintAnalyse.Visible = false; 
-            CerrarApp.Enabled = false; 
-            CerrarApp.Visible = false; 
-            ClcBtn.Enabled = false; 
-            ClcBtn.Visible = false; // Verstecken Sie den Button
-            txtNewPl.Enabled = false; // Deaktivieren Sie die Textbox
-            btnStrtOldGame.Enabled = true; // aktivieren Sie den Button
-            btnStrtOldGame.Visible = true; // zeigen Sie den Button an
-            btnSaveOldGame.Enabled = true; // aktivieren Sie den Button
-            btnSaveOldGame.Visible = true; // zeigen Sie den Button an
-            btnSavePoints.Enabled = true; // aktivieren Sie den Button  
-            btnSavePoints.Visible = true; // zeigen Sie den Button an
-            lblSoloOldGames.Visible = true; // zeigen Sie das Label an
-            dTPOldGameDate.Visible = true; // zeigen Sie das Label an
-            dTPOldGameDate.Enabled = true; // aktivieren Sie das Label
-
-
-            // string eingabeDatum = PromptUserForInput("Datum für alte Spiele eingeben (yyMMdd):", DateTime.Now.ToString("yyMMdd"));
-            //PartieZaehler(eingabeDatum);
-
-
-        }
-        ******************/
+       /************************
         private void dTPOldGameDate_ValueChanged(object sender, EventArgs e)
         {
            // string formattedDate = dTPOldGameDate.Value.ToString("yyMMdd");
@@ -710,7 +652,7 @@ namespace Romme_V2
             txtNewPl.Enabled = true;
             
         }
-
+       *********************/
         private void dTPOldGameDate_CloseUp(object sender, EventArgs e)
         {
             string spielNummerOldGame = dTPOldGameDate.Value.ToString("yyMMdd"); //$"{formattedDate}";
@@ -728,51 +670,11 @@ namespace Romme_V2
             StopBtn_Click(sender, e); // Bestehende Methode aufrufen
             btnPrintAnalyse.Enabled = false;
             ToggleEingabeModus();
+            CerrarApp.Enabled = true;
             AdminForm adminForm = new AdminForm(this); // Hauptform übergeben
             adminForm.Show(); // AdminForm anzeigen
             this.Hide(); // Form1 nur ausblenden
         }
-
-        /*****************************+   false
-       private void btnStrtOldGame_Click(object sender, EventArgs e)
-       {
-
-           System.Windows.Forms.Label[] players = { player1, player2, player3, player4, player5 };
-           System.Windows.Forms.TextBox[] pointsFields = { pointsPl1, pointsPl2, pointsPl3, pointsPl4, pointsPl5 };
-           System.Windows.Forms.Label[] sumFields = { sumPl1, sumPl2, sumPl3, sumPl4, sumPl5 };
-           ++spielNummer;
-           gameCtr.Text = spielNummer.ToString();
-           CerrarApp.Enabled = false;
-           //PartieZaehler();
-
-           if (numPlayer <= 1)
-           {
-               MessageBox.Show("Por favor añade por lo menos dos jugadores antes de start.");
-               return;
-           }
-
-           txtNewPl.Enabled = false;
-           btnPrintAnalyse.Enabled = false;
-           pointsPl1.Enabled = true;
-           pointsPl2.Enabled = true;
-           pointsPl3.Enabled = true;
-           pointsPl4.Enabled = true;
-           pointsPl5.Enabled = true;
-
-           ResetPointsFieldsText(pointsFields);
-
-           for (int j = players.Length - 1; j >= numPlayer; j--)
-           {
-               players[j].ForeColor = this.BackColor;
-               pointsFields[j].Enabled = false;
-               sumFields[j].ForeColor = this.BackColor;
-           }
-           strtJuego.Enabled = false;
-           cckBaraje1.Checked = true;
-
-       }
-
-       *****************************/
     }
 
 

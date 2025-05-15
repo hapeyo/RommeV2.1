@@ -67,7 +67,7 @@ namespace Romme_V2
                 .ToList();
         }
 
-        private void druckenBestimmtePartie()
+        public void druckenBestimmtePartie()
         {
             // 1️⃣ Letzte Spielnummer bestimmen
             // string spielZeile = spieleListe.Last().Spielnummer;
@@ -139,10 +139,10 @@ namespace Romme_V2
             {
                 dGVLastPartie.Columns[spieler.Spitzname].HeaderText = spieler.Spitzname;
             }
-            DruckenAlsPDF();
+          //  DruckenAlsPDF();
         }
 
-        private void DruckenAlsPDF()//diese Methode gibt ein verbessertes PDF aus
+        public void DruckenAlsPDF()//diese Methode gibt ein verbessertes PDF aus
         {
             Document doc = new Document();
             string dateiNameRaw = spielZeile.Substring(0, 8);
@@ -289,18 +289,37 @@ namespace Romme_V2
 
         private void btnBackToMain_Click(object sender, EventArgs e)
         {
+            // Datei speichern
+            SpeichereSpieleListe("spiele.csv");
             mainForm.Show(); // Form1 wieder sichtbar machen
             this.Hide(); // PrintAnalyseForm ausblenden
 
         }
-
+        private void SpeichereSpieleListe(string dateipfad)
+        {
+            using (StreamWriter writer = new StreamWriter(dateipfad))
+            {
+                foreach (var spiel in spieleListe)
+                {
+                    writer.WriteLine($"{spiel.Spielnummer},{spiel.SpielerID},{spiel.Punkte}"); // Passe die Felder an
+                }
+            }
+        }
         private void btnLastGame_Click(object sender, EventArgs e)
         {
+            if (spieleListe == null || !spieleListe.Any()) // Prüft, ob die Liste leer ist
+            {
+                MessageBox.Show("Es gibt noch keine gespeicherten Spiele.");
+                return;
+            }
+
             //Letzte Spielnummer bestimmen
             spielZeile = spieleListe.Last().Spielnummer;
-            // string spielPrefix = spielZeile.Substring(0, 8);
-            druckenBestimmtePartie();
-
+            {
+                // string spielPrefix = spielZeile.Substring(0, 8);
+                druckenBestimmtePartie();
+                DruckenAlsPDF();
+            }
         }
         private List<string> HoleAlleSpielPrefixe()
         {
@@ -328,12 +347,7 @@ namespace Romme_V2
             }
 
         }
-        /***********************+
-                private void btIPrintPdf_Click(object sender, EventArgs e)
-                {
-
-                }
-        ********************/
+        
         private void cbBSpielnummer_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (!programmaticSelection && cbBSpielnummer.SelectedIndex != -1)
@@ -341,7 +355,16 @@ namespace Romme_V2
                 spielZeile = cbBSpielnummer.SelectedItem.ToString();
                 MessageBox.Show($"Gewählte Spielnummer: {spielZeile}");
                 druckenBestimmtePartie();
+                Abfrage dialog = new Abfrage(this, spielZeile);
+                dialog.ShowDialog();
             }
+        }
+        // Spielnummer löschen in PrintAnalyseForm.cs
+        public void LoescheSpiel(string spielnummer)
+        {
+            
+            spieleListe.RemoveAll(spiel => spiel.Spielnummer.StartsWith(spielnummer));
+            MessageBox.Show($"Spielnummer {spielnummer} wurde gelöscht.");
         }
         public static List<SpielerStatistik> BerechneRanking(List<Spiel> spieleListe)
         {
@@ -549,21 +572,5 @@ namespace Romme_V2
         }
     }
 
-    /*****************
-    public class SpielerStatistik
-    {
-        public string SpielerID { get; set; }
-        public string Name { get; set; }
-        public int AP { get; set; }  // Anzahl Partien
-        public int AS { get; set; }  // Anzahl Spiele
-        public int GP { get; set; }  // Gewonnene Partien (kleinste Summe)
-        public int GS { get; set; }  // Gewonnene Spiele (0 Punkte)
-        public int GPZ { get; set; } // Gesamtpunktezahl
-
-        public double BerechneRanking()
-        {
-            return (double)GPZ / AS - ((double)GPZ / AS - (double)(GP / AP + GS / AS) / 2);
-        }
-    }
-    **************/
+   
 }

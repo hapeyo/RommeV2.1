@@ -138,20 +138,7 @@ namespace Romme_V2
 
 
 
-        /********************
-        private string PromptUserForInput(string message, string defaultValue)
-        {
-            // Zeigt eine Eingabeaufforderung an, um Werte zu bearbeiten
-            using (var dialog = new Form())
-            {
-                dialog.Text = message;
-                var textBox = new TextBox { Text = defaultValue, Dock = DockStyle.Fill };
-                dialog.Controls.Add(textBox);
-                dialog.ShowDialog();
-                return textBox.Text;
-            }
-        }
-       *********************/
+        
 
 
         private void btnUpdatePlayer_Click(object sender, EventArgs e)
